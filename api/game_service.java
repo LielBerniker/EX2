@@ -1,3 +1,7 @@
+package api;
+
+import api.directed_weighted_graph;
+
 import java.io.Serializable;
 /**
  * This interface represents the main functionality of the game-server, allowing a User the following:

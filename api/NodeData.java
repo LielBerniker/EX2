@@ -1,5 +1,8 @@
+package api;
 
-public class NodeData implements node_data{
+import api.geo_location;
+
+public class NodeData implements node_data {
     private int key;
     private geo_location Node_Location;
     private double Node_Weight;
@@ -7,7 +10,7 @@ public class NodeData implements node_data{
     private int Node_Tag;
     private static int Key_Counter = 0;
 
-    public NodeData(int x,int y,int z)
+    public NodeData(double x,double y,double z)
     {
         this.key = Key_Counter;
         Key_Counter++;
@@ -15,12 +18,19 @@ public class NodeData implements node_data{
         this.Node_Weight = 0;
         this.Node_Info = "";
         this.Node_Tag = 0;
-
-
+    }
+    public NodeData(int key,double x,double y,double z)
+    {
+        this.key = key;
+        Key_Counter++;
+        this.Node_Location = new Geo_Location(x,y,z);
+        this.Node_Weight = 0;
+        this.Node_Info = "";
+        this.Node_Tag = 0;
     }
     public NodeData(node_data n)
     {this.key = n.getKey();
-        this.Node_Location = n.getLocation();
+        this.Node_Location = new Geo_Location(n.getLocation().x(),n.getLocation().y(),n.getLocation().z());
         this.Node_Weight = n.getWeight();
         this.Node_Info = n.getInfo();
         this.Node_Tag = n.getTag();
@@ -47,7 +57,7 @@ public class NodeData implements node_data{
      */
     @Override
     public void setLocation(geo_location p) {
-        this.Node_Location=p;
+        this.Node_Location=new Geo_Location(p.x(),p.y(),p.z());
     }
     /**
      * Returns the weight associated with this node.
@@ -127,7 +137,6 @@ public class NodeData implements node_data{
         @Override
         public double distance(geo_location g) {
             double d= Math.sqrt((Math.pow(x-g.x(),2)+Math.pow(y-g.y(),2)+Math.pow(z-g.z(),2)));
-
             return d;
         }
     }

@@ -1,18 +1,24 @@
+package api;
+
+import api.directed_weighted_graph;
+
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class DWGraph_DS implements directed_weighted_graph {
-    private HashMap<Integer,node_data> Graph_nodes;
-    private HashMap<Integer,HashMap<Integer,edge_data>> Graph_Edges_go_out;
-    private HashMap<Integer,HashMap<Integer,edge_data>> Graph_Edges_go_in;
+
+    private HashMap<Integer, node_data> Graph_nodes;
+    private HashMap<Integer,HashMap<Integer, edge_data>> Graph_Edges_go_out;
+    private HashMap<Integer,HashMap<Integer, edge_data>> Graph_Edges_go_in;
     private int MC;
     private int Edge_count;
 
     public DWGraph_DS()
     {
-        this.Graph_nodes = new HashMap<Integer,node_data>();
-        this.Graph_Edges_go_out = new HashMap<Integer,HashMap<Integer,edge_data>>();
-        this.Graph_Edges_go_in = new HashMap<Integer,HashMap<Integer,edge_data>>();
+        this.Graph_nodes = new HashMap<Integer, node_data>();
+        this.Graph_Edges_go_out = new HashMap<Integer,HashMap<Integer, edge_data>>();
+        this.Graph_Edges_go_in = new HashMap<Integer,HashMap<Integer, edge_data>>();
         this.Edge_count = 0;
         this.MC = 0;
     }
@@ -48,7 +54,9 @@ public class DWGraph_DS implements directed_weighted_graph {
     public void addNode(node_data n) {
         if(getNode(n.getKey())==null)
         {
-          Graph_nodes.put(n.getKey(),n);
+            node_data node1 = new NodeData(n);
+          Graph_nodes.put(n.getKey(),node1);
+          MC++;
         }
     }
     /**
@@ -59,8 +67,8 @@ public class DWGraph_DS implements directed_weighted_graph {
      */
     @Override
     public void connect(int src, int dest, double w) {
-        HashMap<Integer,edge_data>graph_out = new HashMap<Integer,edge_data>();
-        HashMap<Integer,edge_data> graph_in = new HashMap<Integer,edge_data>();
+        HashMap<Integer, edge_data>graph_out = new HashMap<Integer, edge_data>();
+        HashMap<Integer, edge_data> graph_in = new HashMap<Integer, edge_data>();
         boolean mc_check=true,edge_check=true;
         edge_data temp_edge_out, temp_edge_in;
         try {
@@ -146,9 +154,10 @@ public class DWGraph_DS implements directed_weighted_graph {
      */
     @Override
     public Collection<edge_data> getE(int node_id) {
+        HashSet<edge_data> temp_collection = new HashSet<edge_data>();
         if(Graph_Edges_go_out.get(node_id)!=null)
         {return Graph_Edges_go_out.get(node_id).values();}
-        return null;
+        return temp_collection;
     }
     /**
      * Deletes the node (with the given ID) from the graph -
@@ -160,15 +169,19 @@ public class DWGraph_DS implements directed_weighted_graph {
     public node_data removeNode(int key) {
         int connector_key,connect_to_key;
         if(getNode(key)!=null) {
-            for (edge_data current_connector : Graph_Edges_go_in.get(key).values()) {
-                connector_key = current_connector.getSrc();
-                Graph_Edges_go_out.get(connector_key).remove(key);
-                Edge_count--;
+            if(this.Graph_Edges_go_in.get(key)!=null) {
+                for (edge_data current_connector : Graph_Edges_go_in.get(key).values()) {
+                    connector_key = current_connector.getSrc();
+                    Graph_Edges_go_out.get(connector_key).remove(key);
+                    Edge_count--;
+                }
             }
-            for (edge_data current_connect_to : Graph_Edges_go_out.get(key).values()) {
-                connect_to_key = current_connect_to.getDest();
-                Graph_Edges_go_in.get(connect_to_key).remove(key);
-                Edge_count--;
+            if(this.getE(key).size()>0) {
+                for (edge_data current_connect_to : Graph_Edges_go_out.get(key).values()) {
+                    connect_to_key = current_connect_to.getDest();
+                    Graph_Edges_go_in.get(connect_to_key).remove(key);
+                    Edge_count--;
+                }
             }
             Graph_Edges_go_out.remove(key);
             Graph_Edges_go_in.remove(key);
@@ -192,6 +205,7 @@ public class DWGraph_DS implements directed_weighted_graph {
             if(Graph_Edges_go_out.get(src).get(dest)!=null)
             {Graph_Edges_go_in.get(dest).remove(src);
             Edge_count--;
+            this.MC ++;
                 return Graph_Edges_go_out.get(src).remove(dest);}
         }
         return null;
@@ -220,4 +234,46 @@ public class DWGraph_DS implements directed_weighted_graph {
         return MC;
     }
 
+    /**
+     * return true if the graphs are equal
+     * the function compare first the number of vertices and edges in the graphs
+     * if one of them is not equal return false.
+     * than checks that each vertex contained in the other_g graph,
+     * and that each vertex contain the same edges go from it
+     * this function used by the assert equals in the junit test
+     * and can be used in any equal check between two graphs
+     * @param other_g
+     * @return - true if the graphs are equal, if not false.
+     */
+    @Override
+    public boolean equals (Object other_g) {
+        int current_key, neighbor_key;
+        // if other is from a different object
+        if (!(other_g instanceof directed_weighted_graph))
+            return false;
+        directed_weighted_graph graph_other = (directed_weighted_graph) other_g;
+        // if one or more of the following is not equal : number of edges,of vertices .
+        if (graph_other.nodeSize() != this.nodeSize() || graph_other.edgeSize() != this.edgeSize())
+            return false;
+        // go over the graph and check if other graph had the same vertices
+        for (node_data current_node : this.getV()) {
+            current_key = current_node.getKey();
+            if (graph_other.getNode(current_key) == null)
+                return false;
+            if(this.getE(current_key).size()>0) {
+                // go over the current vertex edges and checks if it had the same neighbors as the vertex in other graph
+                for (edge_data neighbor_edge : this.getE(current_key)) {
+                    neighbor_key = neighbor_edge.getDest();
+                    if (graph_other.getNode(neighbor_key) == null)
+                        return false;
+                    if(graph_other.getEdge(current_key,neighbor_key)==null)
+                        return false;
+                    // if the size of the edge is different
+                    if (this.getEdge(current_key, neighbor_key).getWeight() != graph_other.getEdge(current_key, neighbor_key).getWeight())
+                        return false;
+                }
+            }
+        }
+        return true;
+    }
 }

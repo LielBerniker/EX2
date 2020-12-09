@@ -1,3 +1,14 @@
+package api;
+
+import api.directed_weighted_graph;
+import api.dw_graph_algorithms;
+import com.google.gson.*;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.PrintWriter;
+import java.lang.reflect.Type;
 import java.util.*;
 
 public class DWGraph_Algo implements dw_graph_algorithms {
@@ -58,6 +69,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     @Override
     public boolean isConnected() {
         node_data node_temp;
+        directed_weighted_graph temp_graph= this.copy();
         if (Graph1.nodeSize() == 1 || Graph1.nodeSize() == 0)
             return true;
         Iterator<node_data> first = this.Graph1.getV().iterator();
@@ -69,11 +81,14 @@ public class DWGraph_Algo implements dw_graph_algorithms {
                 return false;
         }
         directed_weighted_graph upside_graph = copy_backward();
+        this.init(upside_graph);
         path_to_all(node_temp.getKey());
         for (node_data current_node : upside_graph.getV()) {
             if (current_node.getTag() != 0)
-                return false;
+            {this.init(temp_graph);
+                return false;}
         }
+        this.init(temp_graph);
         return true;
     }
     private void path_to_all(int src) {
@@ -110,7 +125,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      * Compute a deep copy of this weighted graph but with back backward.
      * @return
      */
-    public directed_weighted_graph copy_backward() {
+    private directed_weighted_graph copy_backward() {
         int node_key,edge_key;
         // crate a new graph
         directed_weighted_graph cop_graph = new DWGraph_DS();
@@ -250,13 +265,37 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     }
     @Override
     public boolean save(String file) {
-        return false;
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(this.Graph1);
+        try {
+            PrintWriter save_to = new PrintWriter(new File(file));
+            save_to.write(json);
+            save_to.close();
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     @Override
     public boolean load(String file) {
-        return false;
+        try {
+            GsonBuilder builder = new GsonBuilder();
+            builder.registerTypeAdapter(directed_weighted_graph.class,new directed_weighted_graph_json_deserializer());
+            Gson gson = builder.create();
+            FileReader reader = new FileReader(file);
+            this.init(gson.fromJson(reader,directed_weighted_graph.class));
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+       return true;
     }
+
     private class node_extend implements Comparable
     {
         int key;
@@ -296,6 +335,79 @@ public class DWGraph_Algo implements dw_graph_algorithms {
                 return 1;
             else
                 return 0;
+        }
+    }
+    private class directed_weighted_graph_json_deserializer implements JsonDeserializer<directed_weighted_graph>
+    {
+
+        @Override
+        public directed_weighted_graph deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            JsonObject jsonObject = json.getAsJsonObject();
+            directed_weighted_graph graph_create = new DWGraph_DS();
+            int nk_temp,nt_temp,src_temp,dest_temp,et_temp;
+            double nl_x , nl_y , nl_z, nw_temp,ew_temp;
+            String ni_temp,ei_temp;
+            JsonElement Graph_nodes_check = jsonObject.get("Graph_nodes");
+            if(Graph_nodes_check!=null){
+            JsonObject Graph_nodes_json_obj1 =Graph_nodes_check.getAsJsonObject();
+            for (Map.Entry<String, JsonElement> set: Graph_nodes_json_obj1.entrySet()) {
+                JsonElement jsonValueNode = set.getValue();
+                JsonElement jsonValueLocation = jsonValueNode.getAsJsonObject().get("Node_Location");
+                 nk_temp = jsonValueNode.getAsJsonObject().get("key").getAsInt();
+                 nt_temp = jsonValueNode.getAsJsonObject().get("Node_Tag").getAsInt();
+                 nw_temp = jsonValueNode.getAsJsonObject().get("Node_Weight").getAsDouble();
+                 ni_temp = jsonValueNode.getAsJsonObject().get("Node_Info").getAsString();
+                 nl_x = jsonValueLocation.getAsJsonObject().get("x").getAsDouble();
+                 nl_y = jsonValueLocation.getAsJsonObject().get("y").getAsDouble();
+                 nl_z = jsonValueLocation.getAsJsonObject().get("z").getAsDouble();
+                 node_data node_temp = new NodeData(nk_temp,nl_x,nl_y,nl_z);
+                 node_temp.setTag(nt_temp);
+                 node_temp.setInfo(ni_temp);
+                 node_temp.setWeight(nw_temp);
+                 graph_create.addNode(node_temp);
+            }
+            JsonObject Graph_edges_json_obj2 = jsonObject.get("Graph_Edges_go_out").getAsJsonObject();
+            for (Map.Entry<String, JsonElement> set1: Graph_edges_json_obj2.entrySet()) {
+                JsonElement jsonValueEdge = set1.getValue();
+                for (Map.Entry<String, JsonElement> set2 : jsonValueEdge.getAsJsonObject().entrySet()) {
+                    JsonElement jsonValueSpecificEdge = set2.getValue();
+                    src_temp = jsonValueSpecificEdge.getAsJsonObject().get("Src").getAsInt();
+                    dest_temp = jsonValueSpecificEdge.getAsJsonObject().get("Dest").getAsInt();
+                    ew_temp = jsonValueSpecificEdge.getAsJsonObject().get("Edge_Weight").getAsDouble();
+                    ei_temp = jsonValueSpecificEdge.getAsJsonObject().get("Edge_Info").getAsString();
+                    et_temp = jsonValueSpecificEdge.getAsJsonObject().get("Edge_Tag").getAsInt();
+                    graph_create.connect(src_temp, dest_temp, ew_temp);
+                    graph_create.getEdge(src_temp,dest_temp).setTag(et_temp);
+                    graph_create.getEdge(src_temp,dest_temp).setInfo(ei_temp);
+                }
+            }
+            }
+            else
+            {
+                Graph_nodes_check = jsonObject.get("Nodes");
+                JsonArray Graph_nodes_json_obj_new =Graph_nodes_check.getAsJsonArray();
+                for (JsonElement set: Graph_nodes_json_obj_new) {
+                    JsonElement jsonValueNode = set.getAsJsonObject();
+                    JsonElement jsonValueLocation = jsonValueNode.getAsJsonObject().get("pos");
+                    String [] pos_contain = jsonValueLocation.getAsString().split(",");
+                    nk_temp = jsonValueNode.getAsJsonObject().get("id").getAsInt();
+                    nl_x = Double.parseDouble(pos_contain[0]);
+                    nl_y = Double.parseDouble(pos_contain[1]);
+                    nl_z = Double.parseDouble(pos_contain[2]);
+                    node_data node_temp = new NodeData(nk_temp,nl_x,nl_y,nl_z);
+                    graph_create.addNode(node_temp);
+                }
+                Graph_nodes_check = jsonObject.get("Edges");
+                JsonArray Graph_edges_json_obj_new = Graph_nodes_check.getAsJsonArray();
+                for ( JsonElement set1: Graph_edges_json_obj_new) {
+                    JsonElement jsonValueEdge = set1.getAsJsonObject();
+                    ew_temp = jsonValueEdge.getAsJsonObject().get("w").getAsDouble();
+                        src_temp = jsonValueEdge.getAsJsonObject().get("src").getAsInt();
+                        dest_temp = jsonValueEdge.getAsJsonObject().get("dest").getAsInt();
+                        graph_create.connect(src_temp, dest_temp, ew_temp);
+                }
+            }
+           return graph_create;
         }
     }
 }

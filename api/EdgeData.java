@@ -1,4 +1,6 @@
-public class EdgeData implements edge_data{
+package api;
+
+public class EdgeData implements edge_data {
  private int Src;
  private int Dest;
  private double Edge_Weight;

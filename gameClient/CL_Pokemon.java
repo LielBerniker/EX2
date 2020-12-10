@@ -70,9 +70,9 @@ public class CL_Pokemon implements Comparable {
 	public int compareTo(@NotNull Object o) {
 		CL_Pokemon cop_pokemon = (CL_Pokemon) o;
 		if(this.getValue()<cop_pokemon.getValue())
-			return -1;
-		else if(this.getValue()>cop_pokemon.getValue())
 			return 1;
+		else if(this.getValue()>cop_pokemon.getValue())
+			return -1;
 		else
 			return 0;
 

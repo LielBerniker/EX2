@@ -20,8 +20,8 @@ public class CL_Agent {
 		private directed_weighted_graph _gg;
 		private CL_Pokemon _curr_fruit;
 		private long _sg_dt;
-		
 		private double _value;
+		private double current_value;
 		
 		
 		public CL_Agent(directed_weighted_graph g, int start_node) {
@@ -31,6 +31,7 @@ public class CL_Agent {
 			_pos = _curr_node.getLocation();
 			_id = -1;
 			setSpeed(0);
+			current_value = 0;
 		}
 		public void update(String json) {
 			JSONObject line;
@@ -166,4 +167,11 @@ public class CL_Agent {
 		public void set_sg_dt(long _sg_dt) {
 			this._sg_dt = _sg_dt;
 		}
+
+		public void setCurrent_value(double value_n)
+		{
+			current_value = value_n;
+		}
+		public double getCurrent_value()
+		{return this.current_value;}
 	}

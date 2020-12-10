@@ -198,4 +198,12 @@ public class Arena {
 	}
 	return null;
 }
+public static boolean free_agents(List<CL_Agent> agents)
+{
+	for (int i = 0; i <agents.size() ; i++) {
+		if(agents.get(i).getCurrent_value()!=agents.get(i).getValue())
+			return true;
+	}
+	return false;
+}
 }

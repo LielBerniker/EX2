@@ -22,7 +22,7 @@ public class Ex2 implements Runnable {
     }
     @Override
     public void run() {
-        int level =1;
+        int level =6;
          game_arena= new Arena();// an arena object to help with multiply functions
         dw_graph_algorithms algo_run = new DWGraph_Algo();// graph algorithms to help create a graph and use more function on it
         game_service game1 = Game_Server_Ex2.getServer(level);// the game level
@@ -192,7 +192,7 @@ public class Ex2 implements Runnable {
      return rand;
 }
 public static int game_full_move(game_service game ,Arena arena,dw_graph_algorithms algo)
-{
+{game.move();
     int id_agn,counter=0, current_count=0;
     PriorityQueue <CL_Pokemon> Pokemons_pri = new PriorityQueue<>();
     arena.setPokemons( arena.json2Pokemons(game.getPokemons()));
@@ -226,11 +226,16 @@ public static int game_full_move(game_service game ,Arena arena,dw_graph_algorit
         if(agn_go.get_curr_fruit()!=null && agn_go.getNextNode()==-1) {
             current_count = agn_go.getNode_counter();
             System.out.println(current_count);
-            System.out.println(algo.getGraph().getEdge(agn_go.getSrcNode(),agn_go.getPoint_arg().get(current_count)).getWeight());
-            int next_node = agn_go.getPoint_arg().get(current_count);
+            if(agn_go.getNode_counter()<agn_go.getPoint_arg().size())
+            { int next_node = agn_go.getPoint_arg().get(current_count);
             agn_go.add_node_count();
             game.chooseNextEdge(agn_go.getID(),next_node);
-            counter++;
+            game.move();
+            counter++;}
+            else
+            {
+                agn_go.set_curr_fruit(null);
+            }
         }
 
     }

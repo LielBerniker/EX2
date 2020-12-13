@@ -41,6 +41,8 @@ public class MyFrame extends JFrame{
 		directed_weighted_graph g = _ar.getGraph();
 		_w2f = Arena.w2f(g,frame);
 	}
+
+
 	public void paint(Graphics g) {
 		int w = this.getWidth();
 		int h = this.getHeight();

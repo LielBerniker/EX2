@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Ex2_Client implements Runnable{
-	private static MyFrame _win;
+	private static frame _win;
 	private static Arena _ar;
 	public static void main(String[] a) {
 		Thread client = new Thread(new Ex2_Client());
@@ -32,13 +32,17 @@ public class Ex2_Client implements Runnable{
 		init(game);
 		
 		game.startGame();
+
+
 		_win.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game.toString());
 		int ind=0;
-		long dt=500;
-		
+		long dt=600;
+
+    //repaint agent after moving it
 		while(game.isRunning()) {
 			moveAgants(game, gg);
 			try {
+
 				if(ind%1==0) {_win.repaint();}
 				Thread.sleep(dt);
 				ind++;
@@ -105,9 +109,9 @@ public class Ex2_Client implements Runnable{
 		_ar = new Arena();
 		_ar.setGraph(gg);
 		_ar.setPokemons(Arena.json2Pokemons(fs));
-		_win = new MyFrame("test Ex2");
+		_win = new frame("test Ex2");
 		_win.setSize(1000, 700);
-		_win.update(_ar);
+		_win.panel.update(_ar);
 
 	
 		_win.show();

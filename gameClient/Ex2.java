@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class Ex2 implements Runnable {
-    private static MyFrame _screen;
+    private static frame _screen;
     private Arena game_arena;
     public static void main(String[] a) throws IOException {
 
@@ -40,9 +40,9 @@ public class Ex2 implements Runnable {
             e.printStackTrace();
         }
         game_arena.setGraph(algo_run.getGraph());
-        _screen = new MyFrame("test Ex2");
+        _screen = new frame("test Ex2");
         _screen.setSize(1000, 700);
-        _screen.update(game_arena);
+        _screen.panel.update(game_arena);
 
 
         _screen.show();

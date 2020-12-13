@@ -7,32 +7,42 @@ import api.node_data;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
 public class CL_Agent {
 		public static final double EPS = 0.0001;
 		private static int _count = 0;
 		private static int _seed = 3331;
-		private int _id;
+
 	//	private long _key;
-		private geo_location _pos;
-		private double _speed;
 		private edge_data _curr_edge;
-		private node_data _curr_node;
-		private directed_weighted_graph _gg;
-		private CL_Pokemon _curr_fruit;
 		private long _sg_dt;
+
+// my use
+        private directed_weighted_graph _gg;
+        private node_data _curr_node;
+	    private int _id;
 		private double _value;
-		private double current_value;
+	    private CL_Pokemon _curr_fruit;
+	    private geo_location _pos;
+	    private double _speed;
+        private HashMap<Integer,Integer> point_arg;
+        private int node_counter;
 		
 		
 		public CL_Agent(directed_weighted_graph g, int start_node) {
-			_gg = g;
-			setMoney(0);
+			this._gg = g;
+			this._value = 0;
 			this._curr_node = _gg.getNode(start_node);
-			_pos = _curr_node.getLocation();
-			_id = -1;
-			setSpeed(0);
-			current_value = 0;
+			this._pos = _curr_node.getLocation();
+			this._id = -1;
+			this._speed=0;
+			point_arg=new HashMap<>();
+			node_counter =0;
 		}
+
 		public void update(String json) {
 			JSONObject line;
 			try {
@@ -74,7 +84,7 @@ public class CL_Agent {
 					+ "}";
 			return ans;	
 		}
-		private void setMoney(double v) {_value = v;}
+		public void setMoney(double v) {_value = v;}
 	
 		public boolean setNextNode(int dest) {
 			boolean ans = false;
@@ -134,12 +144,15 @@ public class CL_Agent {
 		public void setSpeed(double v) {
 			this._speed = v;
 		}
+
 		public CL_Pokemon get_curr_fruit() {
 			return _curr_fruit;
 		}
+
 		public void set_curr_fruit(CL_Pokemon curr_fruit) {
 			this._curr_fruit = curr_fruit;
 		}
+
 		public void set_SDT(long ddtt) {
 			long ddt = ddtt;
 			if(this._curr_edge!=null) {
@@ -161,17 +174,69 @@ public class CL_Agent {
 		public edge_data get_curr_edge() {
 			return this._curr_edge;
 		}
+
 		public long get_sg_dt() {
 			return _sg_dt;
 		}
+
 		public void set_sg_dt(long _sg_dt) {
 			this._sg_dt = _sg_dt;
 		}
 
-		public void setCurrent_value(double value_n)
-		{
-			current_value = value_n;
-		}
-		public double getCurrent_value()
-		{return this.current_value;}
+ // my area:
+	//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$44
+ public void update_first(String json) {
+	 JSONObject line;
+	 try {
+		 line = new JSONObject(json);
+		 JSONObject agents = line.getJSONObject("Agent");
+		 int id = agents.getInt("id");
+		 if(id==this.getID() || this.getID() == -1) {
+			 if(this.getID() == -1) {_id = id;}
+			 double speed = agents.getDouble("speed");
+			 String p = agents.getString("pos");
+			 Point3D pp = new Point3D(p);
+			 int src = agents.getInt("src");
+			 int dest = agents.getInt("dest");
+			 double value = agents.getDouble("value");
+			 this._pos = pp;
+			 this.setCurrNode(src);
+			 this.setSpeed(speed);
+			 this.setNextNode(dest);
+			 this.setMoney(value);
+		 }
+	 }
+	 catch(Exception e) {
+		 e.printStackTrace();
+	 }
+ }
+public void set_pos(String p)
+{
+	Point3D pp = new Point3D(p);
+	this._pos = pp;
+}
+public void setPoint_arg(List<node_data> node_list,int dest)
+{
+	int i=0;
+	this.point_arg.clear();
+	Iterator<node_data> it =node_list.iterator();
+	while(it.hasNext()) {
+		node_data current_node =it.next();
+
+		this.point_arg.put(i,current_node.getKey());
+		i++;
+	}
+	this.point_arg.put(i,dest);
+	this.node_counter = 1;
+}
+public HashMap<Integer, Integer> getPoint_arg()
+{
+	return this.point_arg;
+}
+public void add_node_count()
+{
+	this.node_counter++;
+}
+public int getNode_counter()
+{return this.node_counter;}
 	}

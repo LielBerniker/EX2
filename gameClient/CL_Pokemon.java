@@ -6,10 +6,12 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 public class CL_Pokemon implements Comparable {
+
 	private edge_data _edge;
 	private double _value;
 	private int _type;
 	private Point3D _pos;
+
 	private double min_dist;
 	private int min_ro;
 	
@@ -66,6 +68,19 @@ public class CL_Pokemon implements Comparable {
 		this.min_ro = min_ro;
 	}
 
+
+
+	// my area
+	//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+	/**
+	 * a compare to function
+	 * if this object is bigger than o object in value return 1
+	 * if smaller in value return -1
+	 * else return 0
+	 * @param o
+	 * @return
+	 */
 	@Override
 	public int compareTo(@NotNull Object o) {
 		CL_Pokemon cop_pokemon = (CL_Pokemon) o;
@@ -77,4 +92,33 @@ public class CL_Pokemon implements Comparable {
 			return 0;
 
 	}
+
+	/**
+	 * an equals  function
+	 * if this object is not fully equal to o object return false
+	 * or not from pokemon object type
+	 * else return true
+	 * @param o
+	 * @return
+	 */
+	@Override
+	public boolean equals( Object o) {
+		// if o is from a different object
+		if(!(o instanceof CL_Pokemon))
+			return false;
+		CL_Pokemon cop_pokemon = (CL_Pokemon) o;
+		if(this.getValue()!=((CL_Pokemon) o).getValue())
+			return false;
+		if(this.getLocation().x()!=cop_pokemon.getLocation().x())
+			return false;
+		if(this.getLocation().y()!=cop_pokemon.getLocation().y())
+			return false;
+		if(this.getLocation().z()!=cop_pokemon.getLocation().z())
+			return false;
+		if (this.getType()!=((CL_Pokemon) o).getType())
+			return false;
+		return true;
+
+	}
+
 }

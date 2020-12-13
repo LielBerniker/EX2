@@ -1,9 +1,6 @@
 package gameClient;
 
-import api.directed_weighted_graph;
-import api.edge_data;
-import api.geo_location;
-import api.node_data;
+import api.*;
 import gameClient.util.Point3D;
 import gameClient.util.Range;
 import gameClient.util.Range2D;
@@ -12,10 +9,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
+import java.util.zip.DeflaterOutputStream;
 
 /**
  * This class represents a multi Agents Arena which move on a graph - grabs Pokemons and avoid the Zombies.
@@ -27,12 +22,16 @@ public class Arena {
 	private directed_weighted_graph _gg;
 	private List<CL_Agent> _agents;
 	private List<CL_Pokemon> _pokemons;
+
 	private List<String> _info;
 	private static Point3D MIN = new Point3D(0, 100,0);
 	private static Point3D MAX = new Point3D(0, 100,0);
 
+	private HashMap<Integer,CL_Agent> agents_information;
+
 	public Arena() {;
 		_info = new ArrayList<String>();
+		agents_information = new HashMap<Integer, CL_Agent>();
 	}
 	private Arena(directed_weighted_graph g, List<CL_Agent> r, List<CL_Pokemon> p) {
 		_gg = g;
@@ -42,10 +41,13 @@ public class Arena {
 	public void setPokemons(List<CL_Pokemon> f) {
 		this._pokemons = f;
 	}
+
 	public void setAgents(List<CL_Agent> f) {
 		this._agents = f;
 	}
+
 	public void setGraph(directed_weighted_graph g) {this._gg =g;}//init();}
+
 	private void init( ) {
 
 		MIN=null; MAX=null;
@@ -65,20 +67,23 @@ public class Arena {
 		
 	}
 	public List<CL_Agent> getAgents() {return _agents;}
+
 	public List<CL_Pokemon> getPokemons() {return _pokemons;}
 
 	
 	public directed_weighted_graph getGraph() {
 		return _gg;
 	}
+
 	public List<String> get_info() {
 		return _info;
 	}
+
 	public void set_info(List<String> _info) {
 		this._info = _info;
 	}
 
-	////////////////////////////////////////////////////
+
 	public static List<CL_Agent> getAgents(String aa, directed_weighted_graph gg) {
 		ArrayList<CL_Agent> ans = new ArrayList<CL_Agent>();
 		try {
@@ -95,6 +100,7 @@ public class Arena {
 		}
 		return ans;
 	}
+
 	public static ArrayList<CL_Pokemon> json2Pokemons(String fs) {
 		ArrayList<CL_Pokemon> ans = new ArrayList<>();
 		try {
@@ -129,26 +135,7 @@ public class Arena {
 		}
 	}
 
-	private static boolean isOnEdge(geo_location p, geo_location src, geo_location dest ) {
 
-		boolean ans = false;
-		double dist = src.distance(dest);
-		double d1 = src.distance(p) + p.distance(dest);
-		if(dist>d1-EPS2) {ans = true;}
-		return ans;
-	}
-	private static boolean isOnEdge(geo_location p, int s, int d, directed_weighted_graph g) {
-		geo_location src = g.getNode(s).getLocation();
-		geo_location dest = g.getNode(d).getLocation();
-		return isOnEdge(p,src,dest);
-	}
-	private static boolean isOnEdge(geo_location p, edge_data e, int type, directed_weighted_graph g) {
-		int src = g.getNode(e.getSrc()).getKey();
-		int dest = g.getNode(e.getDest()).getKey();
-		if(type<0 && dest>src) {return false;}
-		if(type>0 && src>dest) {return false;}
-		return isOnEdge(p,src, dest, g);
-	}
 
 	private static Range2D GraphRange(directed_weighted_graph g) {
 		Iterator<node_data> itr = g.getV().iterator();
@@ -178,6 +165,10 @@ public class Arena {
 		return ans;
 	}
 
+
+	//my area:
+	//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
 	/**
 	 * the function return the edge from the current graph that the Pokemon is located on
 	 * if no edge match to the location of the pokemon return null
@@ -187,7 +178,6 @@ public class Arena {
 	 */
 	public static edge_data correct_pokemon_edge(directed_weighted_graph graph1 , CL_Pokemon poki)
 {
-
 	for (node_data current_node :graph1.getV())
 	{// go over the edges of the graph
 		for (edge_data current_edge:graph1.getE(current_node.getKey())) {
@@ -198,12 +188,138 @@ public class Arena {
 	}
 	return null;
 }
-public static boolean free_agents(List<CL_Agent> agents)
-{
-	for (int i = 0; i <agents.size() ; i++) {
-		if(agents.get(i).getCurrent_value()!=agents.get(i).getValue())
-			return true;
+	private static boolean isOnEdge(geo_location p, geo_location src, geo_location dest ) {
+
+		boolean ans = false;
+		double dist = src.distance(dest);
+		double d1 = src.distance(p) + p.distance(dest);
+		if(dist>d1-EPS2) {ans = true;}
+		return ans;
 	}
-	return false;
-}
+	private static boolean isOnEdge(geo_location p, int s, int d, directed_weighted_graph g) {
+		geo_location src = g.getNode(s).getLocation();
+		geo_location dest = g.getNode(d).getLocation();
+		return isOnEdge(p,src,dest);
+	}
+	private static boolean isOnEdge(geo_location p, edge_data e, int type, directed_weighted_graph g) {
+		int src = g.getNode(e.getSrc()).getKey();
+		int dest = g.getNode(e.getDest()).getKey();
+		if(type<0 && dest>src) {return false;}
+		if(type>0 && src>dest) {return false;}
+		return isOnEdge(p,src, dest, g);
+	}
+	public void init_Agents_by_game(String agents_info, directed_weighted_graph graph1) {
+		try {
+			JSONObject all_agents = new JSONObject(agents_info);
+			JSONArray ags = all_agents.getJSONArray("Agents");
+			for(int i=0;i<ags.length();i++) {
+				CL_Agent c = new CL_Agent(graph1,0);
+				c.update(ags.get(i).toString());
+				agents_information.put(c.getID(),c);
+			}
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	public void get_Agents_update(String aa) {
+
+		try {
+			JSONObject all_agents = new JSONObject(aa);
+			JSONArray ags = all_agents.getJSONArray("Agents");
+			for(int i=0;i<ags.length();i++) {
+				update_agent(i,ags.get(i).toString());
+			}
+			//= getJSONArray("Agents");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	private void update_agent(int id_agent,String json) {
+		JSONObject line;
+		try {
+
+			line = new JSONObject(json);
+			JSONObject agents_full = line.getJSONObject("Agent");
+			int id = agents_full.getInt("id");
+			if(id==id_agent) {
+				double speed = agents_full.getDouble("speed");
+				String p = agents_full.getString("pos");
+				int src = agents_full.getInt("src");
+				int dest = agents_full.getInt("dest");
+				double value = agents_full.getDouble("value");
+				agents_information.get(id_agent).set_pos(p);
+				agents_information.get(id_agent).setCurrNode(src);
+				agents_information.get(id_agent).setSpeed(speed);
+				agents_information.get(id_agent).setNextNode(dest);
+				agents_information.get(id_agent).setMoney(value);
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public HashMap<Integer,CL_Agent> get_Agents_info() {
+		return agents_information;
+	}
+
+	/**
+	 * the function checks that the pokemon that the agent is looking for
+	 * is available , if not return false else true
+	 * @param agn
+	 * @return
+	 */
+	public boolean pokemon_contain(CL_Agent agn)
+	{
+		for (CL_Pokemon poke:this.getPokemons()) {
+			if(agn.get_curr_fruit()!=null) {
+				if (agn.get_curr_fruit().equals(poke))
+					return true;
+			}
+		}
+		return false;
+	}
+	/**
+	 * the function checks that the current pokemon is already in progress of searching
+	 * return true if in progress anf false if not
+	 * @param pok
+	 * @return
+	 */
+	public boolean pokemon_in_search(CL_Pokemon pok )
+	{
+		for (CL_Agent agn: this.get_Agents_info().values()) {
+			if(agn.get_curr_fruit()!=null) {
+				if (agn.get_curr_fruit().equals(pok))
+					return true;
+			}
+		}
+			return  false;
+	}
+	public boolean available_agents()
+	{
+		for (CL_Agent agn:this.get_Agents_info().values()) {
+             if(agn.get_curr_fruit()==null && agn.getNextNode()==-1)
+             	return true;
+		}
+		return false;
+	}
+	public int closest_agents(CL_Pokemon poki, dw_graph_algorithms algo)
+	{ int small_id = -1;
+	double small_path = Double.MAX_VALUE,temp_dis;
+		for (CL_Agent agn:this.get_Agents_info().values()) {
+
+			if(agn.get_curr_fruit()==null && agn.getNextNode()==-1)
+			{
+				System.out.println(agn.getSrcNode());
+				System.out.println(poki);
+				temp_dis = algo.shortestPathDist(agn.getSrcNode(),poki.get_edge().getSrc());
+				if (temp_dis<=small_path)
+				{small_path= temp_dis;
+				     small_id = agn.getID();}
+			}
+		}
+		return small_id;
+	}
+
 }

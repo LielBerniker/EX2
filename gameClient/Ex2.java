@@ -2,85 +2,240 @@ package gameClient;
 
 import Server.Game_Server_Ex2;
 import api.*;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-public class Ex2 {
+public class Ex2 implements Runnable {
+    private static MyFrame _screen;
+    private Arena game_arena;
     public static void main(String[] a) throws IOException {
-        int level =0,counter=0;
-        boolean agent_add=true;
-        CL_Pokemon poki_temp;
-        dw_graph_algorithms algo_run = new DWGraph_Algo();
 
-        Queue<CL_Pokemon> look_for_poki = new LinkedList<CL_Pokemon>();
+        Thread user = new Thread(new Ex2());
+        user.start();
 
-        game_service game1 = Game_Server_Ex2.getServer(level);
-        String level_graph = game1.getGraph();
+    }
+    @Override
+    public void run() {
+        int level =1;
+         game_arena= new Arena();// an arena object to help with multiply functions
+        dw_graph_algorithms algo_run = new DWGraph_Algo();// graph algorithms to help create a graph and use more function on it
+        game_service game1 = Game_Server_Ex2.getServer(level);// the game level
+
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("level_"+Integer.toString(level)));
-            writer.write(level_graph);
-            writer.close();
-        }
-        catch (IOException e) {
+            init_graph_to_algo(level,game1,algo_run);
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        algo_run.load("level_"+Integer.toString(level));
-
-
-       ArrayList<CL_Pokemon> Pokemons = Arena.json2Pokemons(game1.getPokemons());
-       PriorityQueue <CL_Pokemon> Pokemons_pri = new PriorityQueue<CL_Pokemon>();
-        Iterator<CL_Pokemon> it = Pokemons.iterator();
-        while(it.hasNext()) {
-            CL_Pokemon pokemon_go =it.next();
-           pokemon_go.set_edge(Arena.correct_pokemon_edge(algo_run.getGraph(),pokemon_go));
-            Pokemons_pri.add(pokemon_go);
+        System.out.println(game1);
+        PriorityQueue <CL_Pokemon> Pokemons_pri = init_pokemones(game1,game_arena,algo_run);// collection of pokemos by their value
+        try {
+            add_all_agents(game_arena,game1,Pokemons_pri,algo_run);// collection of pokemons that been search by an agent
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-     // add agents to the game
-        while(agent_add )
-        {// if not all pokemons have been seek choose
-            if( !Pokemons_pri.isEmpty())
-            {poki_temp = Pokemons_pri.poll();
-            // add the agent and reset its starting node
-            agent_add =  game1.addAgent(poki_temp.get_edge().getSrc());
-            // set the agent next node to be the dest
-            game1.chooseNextEdge(counter,poki_temp.get_edge().getDest());
-            // add the pokimon to the seeking pokemon collection
-            look_for_poki.add(poki_temp);
-            counter++;
-            // of didedt been added
-            if(!agent_add)
-            {
-                // return the pokemon to the waiting area
-             Pokemons_pri.add(poki_temp);
-             // and remove the pokemon from seeking pokemon
-             look_for_poki.remove(poki_temp);
+        game_arena.setGraph(algo_run.getGraph());
+        _screen = new MyFrame("test Ex2");
+        _screen.setSize(1000, 700);
+        _screen.update(game_arena);
+
+
+        _screen.show();
+        game1.startGame();
+       // _screen.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game1.toString());
+        int ind=0;
+        long dt=500;
+        while (game1.isRunning())
+        {
+
+           game_full_move(game1,game_arena,algo_run);
+            { game1.move();
+                System.out.println(game1.getAgents());}
+
+                try {
+                    if (ind % 1 == 0) {
+                        _screen.repaint();
+                    }
+                    Thread.sleep(dt);
+                                     ind++;
+                               }
+                              catch(Exception e) {
+                                  e.printStackTrace();
+                             }
+
             }
-            }
-           else
-               // add agent random
-                agent_add =  game1.addAgent(1);
-        }
-        // list of agents after add
-        List<CL_Agent> agents= Arena.getAgents(game1.getAgents(),algo_run.getGraph());
-        // go over the agents and set their pokemon
-        for (int i = 0; i <look_for_poki.size() ; i++) {
-            CL_Agent agent_temp = agents.get(i);
-            agent_temp.set_curr_fruit(look_for_poki.poll());
-        }
-      game1.startGame();
-        System.out.println(game1.move());
-while (game1.isRunning())
-{
-    if(Arena.free_agents(agents)==true) {
-        Pokemons = Arena.json2Pokemons(game1.getPokemons());
+        String res = game1.toString();
 
+        System.out.println(res);
+        System.exit(0);
     }
 
+
+
+    /**
+     * the function set the graph in the algo , to the graph of the number of the level
+     * provided
+     * doing this by getting the graph from the game and write it to a file
+     * than read it with the load function in the dw_graph_algorithms
+     * @param level
+     * @param game1
+     * @param algo1
+     * @throws IOException
+     */
+    public static void init_graph_to_algo(int level, game_service game1, dw_graph_algorithms algo1) throws IOException
+{
+    String level_graph = game1.getGraph();
+    try {
+        BufferedWriter writer = new BufferedWriter(new FileWriter("level_"+Integer.toString(level)));
+        writer.write(level_graph);
+        writer.close();
+    }
+    catch (IOException e) {
+        e.printStackTrace();
+    }
+    algo1.load("level_"+Integer.toString(level));
 }
 
+    /**
+     * the function create a  PriorityQueue and return it
+     * the function get the pokemons from the game and set tham to a list
+     * than go over the list an insert them into a Priority Queue
+     * also sets the arena pokemons
+     * @param game1
+     * @param arena
+     * @param algo
+     * @return   return a Priority Queue of pokemons
+     */
+    public static PriorityQueue<CL_Pokemon> init_pokemones(game_service game1, Arena arena,dw_graph_algorithms algo)
+{
+    PriorityQueue <CL_Pokemon> Pokemons_pri = new PriorityQueue<CL_Pokemon>();
+    ArrayList<CL_Pokemon> pokemons= arena.json2Pokemons(game1.getPokemons());
+    // go over the pokemons list an insert them into a  Priority Queue
+    Iterator<CL_Pokemon> it = pokemons.iterator();
+    while(it.hasNext()) {
+        CL_Pokemon pokemon_go =it.next();
+        // set the pokemon edge before the insert to the Priority Queue
+        pokemon_go.set_edge(arena.correct_pokemon_edge(algo.getGraph(),pokemon_go));
+        Pokemons_pri.add(pokemon_go);
     }
+    arena.setPokemons(pokemons);
+    return Pokemons_pri;
+}
+
+    /**
+     * the function return a Queue of pokemons that contain all the pokemons,
+     * that currently been set to an agent
+     * the function add an agents to the game and set their start node .
+     * an agent start node sets by the pokemon from the Priority Queue
+     * the start node been set to the closest node to the pokemon that been chose to the agent
+     *
+     * @param arena
+     * @param game
+     * @param pokemons_order
+     * @return
+     */
+    public static void add_all_agents(Arena arena, game_service game ,PriorityQueue<CL_Pokemon> pokemons_order, dw_graph_algorithms algo) throws JSONException {
+    boolean agent_add=true;
+    CL_Pokemon poki_temp;
+    int  rand;
+    rand = random_node(algo);
+    Queue<CL_Pokemon> look_for_pokemons = new LinkedList<CL_Pokemon>();
+    JSONObject full_info = new JSONObject(game.toString());
+    JSONObject g_server = full_info.getJSONObject("GameServer");
+    int agents_all = g_server.getInt("agents");
+    // add agents to the game
+
+        for (int i = 0; i < agents_all; i++)
+    {// if not all pokemons have been seek choose
+        if( !pokemons_order.isEmpty()) {
+            poki_temp = pokemons_order.poll();
+            // add the agent and reset its starting node
+            game.addAgent(poki_temp.get_edge().getSrc());
+            // add the pokimon to the seeking pokemon collection
+            look_for_pokemons.add(poki_temp);
+        }
+        else
+        {  // add agent random
+            rand = random_node(algo);
+            agent_add =  game.addAgent(rand);}
+    }
+    arena.init_Agents_by_game(game.getAgents(),algo.getGraph());
+
+    // go over the agents and set their pokemon
+    for (int i = 0; i <arena.get_Agents_info().size() ; i++) {
+        arena.get_Agents_info().get(i).set_curr_fruit(look_for_pokemons.poll());
+        CL_Agent agn_temp = arena.get_Agents_info().get(i);
+        CL_Pokemon poki2 = agn_temp.get_curr_fruit();
+
+        int src_node = agn_temp.getSrcNode();
+        int dest_node = poki2.get_edge().getSrc();
+        List<node_data> node_list = algo.shortestPath(src_node,dest_node);
+        agn_temp.setPoint_arg(node_list,poki2.get_edge().getDest());
+    }
+}
+
+    /**
+     * choose random a node from the graph
+     * and return it
+     * @param algo
+     * @return
+     */
+    public static int random_node(dw_graph_algorithms algo)
+{
+    int rand ;
+     rand  = (int)(Math.random()*(algo.getGraph().nodeSize()-1));
+     return rand;
+}
+public static int game_full_move(game_service game ,Arena arena,dw_graph_algorithms algo)
+{
+    int id_agn,counter=0, current_count=0;
+    PriorityQueue <CL_Pokemon> Pokemons_pri = new PriorityQueue<>();
+    arena.setPokemons( arena.json2Pokemons(game.getPokemons()));
+    for (CL_Pokemon poke:arena.getPokemons()) {
+       poke.set_edge(Arena.correct_pokemon_edge(algo.getGraph(), poke));
+    }
+    arena.get_Agents_update(game.getAgents());
+    arena.setAgents(arena.getAgents(game.getAgents(), algo.getGraph()));
+    for (CL_Agent agn:arena.get_Agents_info().values()) {
+        if(!arena.pokemon_contain(agn))
+            arena.get_Agents_info().get(agn.getID()).set_curr_fruit(null);
+    }
+    for (CL_Pokemon poki: arena.getPokemons()) {
+       if(!arena.pokemon_in_search(poki))
+        { Pokemons_pri.add(poki); }
+    }
+    while(arena.available_agents())
+    {
+        CL_Pokemon poki_temp = Pokemons_pri.poll();
+        id_agn = arena.closest_agents(poki_temp,algo);
+        CL_Agent agn_temp = arena.get_Agents_info().get(id_agn);
+        agn_temp.set_curr_fruit(poki_temp);
+        int src_node = agn_temp.getSrcNode();
+        int dest_node = poki_temp.get_edge().getSrc();
+        List<node_data> node_list = algo.shortestPath(src_node,dest_node);
+        agn_temp.setPoint_arg(node_list,poki_temp.get_edge().getDest());
+
+    }
+
+    for (CL_Agent agn_go:arena.get_Agents_info().values()) {
+        if(agn_go.get_curr_fruit()!=null && agn_go.getNextNode()==-1) {
+            current_count = agn_go.getNode_counter();
+            System.out.println(current_count);
+            System.out.println(algo.getGraph().getEdge(agn_go.getSrcNode(),agn_go.getPoint_arg().get(current_count)).getWeight());
+            int next_node = agn_go.getPoint_arg().get(current_count);
+            agn_go.add_node_count();
+            game.chooseNextEdge(agn_go.getID(),next_node);
+            counter++;
+        }
+
+    }
+return counter;
+}
+
 
 }

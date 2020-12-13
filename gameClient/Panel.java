@@ -8,6 +8,7 @@ import gameClient.util.Range2D;
 import gameClient.util.Range2Range;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.Iterator;
 import java.util.List;
@@ -23,13 +24,14 @@ public class Panel extends JPanel{
     private int _ind;
     private Arena ar;
     private Range2Range _w2f;
+    TitledBorder border = new TitledBorder("This is my title");
 
 
     public  Panel() {
         int _ind = 0;
 
-
     }
+
 
     public void update(Arena ar) {
         this.ar = ar;
@@ -56,8 +58,7 @@ public class Panel extends JPanel{
         drawGraph(g);
         drawAgants(g);
         drawInfo(g);
-
-
+        clock(g);
 
 
     }
@@ -147,13 +148,19 @@ public class Panel extends JPanel{
         geo_location s0 = this._w2f.world2frame(s);
         geo_location d0 = this._w2f.world2frame(d);
         g.drawLine((int)s0.x(), (int)s0.y(), (int)d0.x(), (int)d0.y());
+
+
+        g.setColor(Color.BLACK);
+       // g.drawString(""+e.getWeight(),);
         //	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
     }
 
-    private void showTime(Graphics g , game_service game ){
+    private void clock(Graphics g){
 
         g.setColor(new Color(123, 46, 123));
-        g.drawString(""+game.timeToEnd(),-20,-20);
+        g.drawString(""+ar.getTime(),-20,-20);
 
     }
+
+
 }

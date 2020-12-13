@@ -22,6 +22,7 @@ public class Arena {
 	private directed_weighted_graph _gg;
 	private List<CL_Agent> _agents;
 	private List<CL_Pokemon> _pokemons;
+	private long time;
 
 	private List<String> _info;
 	private static Point3D MIN = new Point3D(0, 100,0);
@@ -32,12 +33,21 @@ public class Arena {
 	public Arena() {;
 		_info = new ArrayList<String>();
 		agents_information = new HashMap<Integer, CL_Agent>();
+		time=0;
 	}
 	private Arena(directed_weighted_graph g, List<CL_Agent> r, List<CL_Pokemon> p) {
 		_gg = g;
 		this.setAgents(r);
 		this.setPokemons(p);
 	}
+
+	public void setTime(long t){
+		this.time=t;
+	}
+	public  long getTime(){
+		return this.time;
+	}
+
 	public void setPokemons(List<CL_Pokemon> f) {
 		this._pokemons = f;
 	}

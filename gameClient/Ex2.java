@@ -52,6 +52,8 @@ public class Ex2 implements Runnable {
         long dt=500;
         while (game1.isRunning())
         {
+            //todo
+           game_arena.setTime(game1.timeToEnd());
 
            game_full_move(game1,game_arena,algo_run);
             { game1.move();

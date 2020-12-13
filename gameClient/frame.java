@@ -14,5 +14,8 @@ public class frame extends JFrame {
         panel = new Panel();
         this.add(panel);
 
+        this.setVisible(true);
+
+
     }
 }

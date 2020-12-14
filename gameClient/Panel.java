@@ -10,6 +10,8 @@ import gameClient.util.Range2Range;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public class Panel extends JPanel{
     private int _ind;
     private Arena ar;
     private Range2Range _w2f;
-    TitledBorder border = new TitledBorder("This is my title");
+
 
 
     public  Panel() {
@@ -54,13 +56,13 @@ public class Panel extends JPanel{
         int h = this.getHeight();
 
         updateFrame();
+
         drawPokemons(g);
         drawGraph(g);
         drawAgants(g);
         drawInfo(g);
         clock(g);
         drawTitle(g);
-
 
     }
     private void drawInfo(Graphics g) {
@@ -70,8 +72,6 @@ public class Panel extends JPanel{
            // g.drawString(info.get(i)+" dt: "+dt,100,60+i*20);
             g.drawString(""+info.get(i),100,60+i*20);
 
-            g.setColor(new Color(194, 53, 53));
-            g.drawString("pokemon game",20,-20);
 
         }
 
@@ -115,7 +115,7 @@ public class Panel extends JPanel{
         }
     }
     private void drawAgants(Graphics g) {
-        List<CL_Agent> rs = this.ar.getAgents();
+        HashMap<Integer,CL_Agent> rs = this.ar.get_Agents_info();
         //	Iterator<OOP_Point3D> itr = rs.iterator();
 
         int i=0;
@@ -157,17 +157,19 @@ public class Panel extends JPanel{
     private void clock(Graphics g){
 
         g.setColor(new Color(65, 173, 69));
-        g.drawOval(20,20,50,50);
-        g.fillOval(20,20,50,50);
+        g.drawOval(20,20,60,60);
+        g.fillOval(20,20,60,60);
         g.setColor(new Color(3, 3, 3));
         g.setFont(new Font("Wide Latin", Font.BOLD, 20) );
-        g.drawString(""+ar.getTime(),35,50);
+        g.drawString(""+ar.getTime(),38,57);
 
     }
 private void drawTitle(Graphics g){
-    g.setColor(new Color(5, 5, 5));
+    g.setColor(new Color(218, 229, 227));
     g.setFont(new Font("Wide Latin", Font.BOLD, 25) );
-    g.drawString("-pokemon game-",100,50);
+
+    g.drawString("-pokemon game-",350,50);
+
 }
 
 }

@@ -8,9 +8,9 @@ public class frame extends JFrame {
 
     public frame(String a){
         super(a);
-        this.setTitle("pokemon game");
+        this.setTitle("liel & rivka");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setBackground(Color.pink);
+        this.setBackground(new Color(171, 212, 210));
         panel = new Panel();
         this.add(panel);
 

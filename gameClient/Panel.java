@@ -59,6 +59,7 @@ public class Panel extends JPanel{
         drawAgants(g);
         drawInfo(g);
         clock(g);
+        drawTitle(g);
 
 
     }
@@ -80,12 +81,12 @@ public class Panel extends JPanel{
         Iterator<node_data> iter = gg.getV().iterator();
         while(iter.hasNext()) {
             node_data n = iter.next();
-            g.setColor(Color.blue);
+            g.setColor(Color.white;
             drawNode(n,5,g);
             Iterator<edge_data> itr = gg.getE(n.getKey()).iterator();
             while(itr.hasNext()) {
                 edge_data e = itr.next();
-                g.setColor(Color.gray);
+                g.setColor(Color.white);
                 drawEdge(e, g);
 
             }
@@ -149,18 +150,24 @@ public class Panel extends JPanel{
         geo_location d0 = this._w2f.world2frame(d);
         g.drawLine((int)s0.x(), (int)s0.y(), (int)d0.x(), (int)d0.y());
 
-
-        g.setColor(Color.BLACK);
        // g.drawString(""+e.getWeight(),);
         //	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
     }
 
     private void clock(Graphics g){
 
-        g.setColor(new Color(123, 46, 123));
-        g.drawString(""+ar.getTime(),-20,-20);
+        g.setColor(new Color(65, 173, 69));
+        g.drawOval(20,20,50,50);
+        g.fillOval(20,20,50,50);
+        g.setColor(new Color(3, 3, 3));
+        g.setFont(new Font("Wide Latin", Font.BOLD, 20) );
+        g.drawString(""+ar.getTime(),35,50);
 
     }
-
+private void drawTitle(Graphics g){
+    g.setColor(new Color(5, 5, 5));
+    g.setFont(new Font("Wide Latin", Font.BOLD, 25) );
+    g.drawString("-pokemon game-",100,50);
+}
 
 }

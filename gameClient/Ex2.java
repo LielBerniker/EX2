@@ -266,33 +266,31 @@ public static void game_full_move(game_service game ,Arena arena,dw_graph_algori
             { Pokemons_list.add(poki); }
         }
         for (int i = 0; i <arena.get_Agents_info().size() ; i++) {
-            if(Pokemons_list.isEmpty())
-                break;
             CL_Agent agn_temp = arena.get_Agents_info().get(i);
             if(agn_temp.get_curr_fruit()==null && agn_temp.getNextNode() ==-1) {
-                CL_Pokemon poki_temp = arena.closest_pokemon(agn_temp, Pokemons_list, algo);
-                agn_temp.set_curr_fruit(poki_temp);
-                int src_node = agn_temp.getSrcNode();
-                int dest_node = poki_temp.get_edge().getSrc();
-                List<node_data> node_list = algo.shortestPath(src_node, dest_node);
-                agn_temp.setPoint_arg(node_list, poki_temp.get_edge().getDest());
-                agn_temp.setNode_counter(1);
+                if(!Pokemons_list.isEmpty()) {
+                    CL_Pokemon poki_temp = arena.closest_pokemon(agn_temp, Pokemons_list, algo);
+                    agn_temp.set_curr_fruit(poki_temp);
+                    int src_node = agn_temp.getSrcNode();
+                    int dest_node = poki_temp.get_edge().getSrc();
+                    List<node_data> node_list = algo.shortestPath(src_node, dest_node);
+                    agn_temp.setPoint_arg(node_list, poki_temp.get_edge().getDest());
+                    agn_temp.setNode_counter(1);
+                }
             }
-        }
-        for (CL_Agent agn_go:arena.get_Agents_info().values()) {
-            if(agn_go.get_curr_fruit()!=null && agn_go.getNextNode()==-1) {
-                current_count = agn_go.getNode_counter();
-                if(agn_go.getNode_counter()<agn_go.getPoint_arg().size())
-                { int next_node = agn_go.getPoint_arg().get(current_count);
-                    agn_go.add_node_count();
-                    game.chooseNextEdge(agn_go.getID(),next_node);
+            else if (agn_temp.get_curr_fruit()!=null && agn_temp.getNextNode()==-1)
+            {
+                current_count = agn_temp.getNode_counter();
+                if(agn_temp.getNode_counter()<agn_temp.getPoint_arg().size())
+                { int next_node = agn_temp.getPoint_arg().get(current_count);
+                    agn_temp.add_node_count();
+                    game.chooseNextEdge(agn_temp.getID(),next_node);
                 }
                 else
                 {
-                    agn_go.set_curr_fruit(null);
+                    agn_temp.set_curr_fruit(null);
                 }
             }
-
         }
     }
 

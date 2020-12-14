@@ -81,7 +81,7 @@ public class Panel extends JPanel{
         Iterator<node_data> iter = gg.getV().iterator();
         while(iter.hasNext()) {
             node_data n = iter.next();
-            g.setColor(Color.white;
+            g.setColor(Color.white);
             drawNode(n,5,g);
             Iterator<edge_data> itr = gg.getE(n.getKey()).iterator();
             while(itr.hasNext()) {

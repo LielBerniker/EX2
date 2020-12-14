@@ -22,13 +22,29 @@ public class Ex2 implements Runnable {
     }
     @Override
     public void run() {
-        int level =6;
-         game_arena= new Arena();// an arena object to help with multiply functions
-        dw_graph_algorithms algo_run = new DWGraph_Algo();// graph algorithms to help create a graph and use more function on it
-        game_service game1 = Game_Server_Ex2.getServer(level);// the game level
+        int scenario ;
+        boolean flag=true;
+        Scanner myObj = new Scanner(System.in);  // Create a Scanner object
+        do {
+            System.out.println("Please enter scenario");
+            scenario = myObj.nextInt();  // Read user input
+            if (scenario<0 || scenario>23)
+            {
+                System.out.println("please enter scenario again");
+                flag = false;
+            }
+        }while (flag);
+        //System.out.println("Please enter use id");
+        //int id = myObj.nextInt();  // Read user input
 
+        int id = 315708370;
+        game_arena= new Arena();// an arena object to help with multiply functions
+        dw_graph_algorithms algo_run = new DWGraph_Algo();// graph algorithms to help create a graph and use more function on it
+        game_service game1 = Game_Server_Ex2.getServer(scenario);// the game level
+
+        game1.login(id);
         try {
-            init_graph_to_algo(level,game1,algo_run);
+            init_graph_to_algo(scenario,game1,algo_run);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -50,6 +66,7 @@ public class Ex2 implements Runnable {
        // _screen.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game1.toString());
         int ind=0;
         long dt=500;
+
         while (game1.isRunning())
         {
             //todo
@@ -194,7 +211,7 @@ public class Ex2 implements Runnable {
      return rand;
 }
 public static int game_full_move(game_service game ,Arena arena,dw_graph_algorithms algo)
-{game.move();
+{
     int id_agn,counter=0, current_count=0;
     PriorityQueue <CL_Pokemon> Pokemons_pri = new PriorityQueue<>();
     arena.setPokemons( arena.json2Pokemons(game.getPokemons()));
@@ -223,7 +240,6 @@ public static int game_full_move(game_service game ,Arena arena,dw_graph_algorit
         agn_temp.setPoint_arg(node_list,poki_temp.get_edge().getDest());
 
     }
-
     for (CL_Agent agn_go:arena.get_Agents_info().values()) {
         if(agn_go.get_curr_fruit()!=null && agn_go.getNextNode()==-1) {
             current_count = agn_go.getNode_counter();
@@ -232,7 +248,6 @@ public static int game_full_move(game_service game ,Arena arena,dw_graph_algorit
             { int next_node = agn_go.getPoint_arg().get(current_count);
             agn_go.add_node_count();
             game.chooseNextEdge(agn_go.getID(),next_node);
-            game.move();
             counter++;}
             else
             {

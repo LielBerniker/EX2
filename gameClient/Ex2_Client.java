@@ -24,8 +24,8 @@ public class Ex2_Client implements Runnable{
 	public void run() {
 		int scenario_num = 11;
 		game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
-	//	int id = 999;
-	//	game.login(id);
+		int id = 315708370;
+		game.login(id);
 		String g = game.getGraph();
 		String pks = game.getPokemons();
 		directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();

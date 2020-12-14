@@ -18,7 +18,7 @@ import java.util.zip.DeflaterOutputStream;
  *
  */
 public class Arena {
-	public static final double EPS1 = 0.001, EPS2=EPS1*EPS1, EPS=EPS2;
+	public static final double EPS1 = 0.00001, EPS2=EPS1*EPS1, EPS=EPS2;
 	private directed_weighted_graph _gg;
 	private List<CL_Agent> _agents;
 	private List<CL_Pokemon> _pokemons;
@@ -263,6 +263,8 @@ public class Arena {
 				agents_information.get(id_agent).setSpeed(speed);
 				agents_information.get(id_agent).setNextNode(dest);
 				agents_information.get(id_agent).setMoney(value);
+				if(!pokemon_contain(agents_information.get(id_agent)))
+					get_Agents_info().get(id_agent).set_curr_fruit(null);
 			}
 		}
 		catch(Exception e) {
@@ -332,4 +334,36 @@ public class Arena {
 		return small_id;
 	}
 
+	public static ArrayList<CL_Pokemon> json2Pokemons_update(String fs,directed_weighted_graph graph1) {
+		ArrayList<CL_Pokemon> ans = new ArrayList<>();
+		try {
+			JSONObject ttt = new JSONObject(fs);
+			JSONArray ags = ttt.getJSONArray("Pokemons");
+			for(int i=0;i<ags.length();i++) {
+				JSONObject pp = ags.getJSONObject(i);
+				JSONObject pk = pp.getJSONObject("Pokemon");
+				int t = pk.getInt("type");
+				double v = pk.getDouble("value");
+				//double s = 0;//pk.getDouble("speed");
+				String p = pk.getString("pos");
+
+				CL_Pokemon f = new CL_Pokemon(new Point3D(p), t, v, 0, null);
+				f.set_edge(correct_pokemon_edge(graph1,f));
+				ans.add(f);
+			}
+		}
+		catch (JSONException e) {e.printStackTrace();}
+		return ans;
+	}
+	public CL_Pokemon closest_pokemon(CL_Agent agn, ArrayList <CL_Pokemon> Pokemons_list, dw_graph_algorithms algo)
+	{ CL_Pokemon poki = null;
+		double small_path = Double.MAX_VALUE,temp_dis;
+		for (CL_Pokemon pokemon_temp:Pokemons_list) {
+				temp_dis = algo.shortestPathDist(agn.getSrcNode(),pokemon_temp.get_edge().getSrc());
+				if (temp_dis<=small_path)
+				{small_path= temp_dis;
+					poki = pokemon_temp;}
+		}
+		return poki;
+	}
 }

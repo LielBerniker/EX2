@@ -22,17 +22,18 @@ public class Ex2 implements Runnable {
     @Override
     public void run() {
         int scenario ;
-        boolean flag=true;
+        boolean flag;
         Scanner myObj = new Scanner(System.in);  // Create a Scanner object
         do {
             System.out.println("Please enter scenario");
             scenario = myObj.nextInt();  // Read user input
             if (scenario<0 || scenario>23)
             {
-                System.out.println("please enter scenario again");
+                System.out.println("there is no scenario " + scenario);
                 flag = false;
             }
-        }while (flag);
+            else flag = true;
+        }while (flag==false);
         //System.out.println("Please enter use id");
         //int id = myObj.nextInt();  // Read user input
 
@@ -68,12 +69,13 @@ public class Ex2 implements Runnable {
 
         while (game1.isRunning())
         {
+            game1.move();
             //todo
            game_arena.setTime(game1.timeToEnd()/1000);
 
-           game_full_move(game1,game_arena,algo_run);
+           game_full_move_2(game1,game_arena,algo_run);
             { game1.move();
-                System.out.println(game1.getAgents());}
+            }
 
                 try {
                     if (ind % 1 == 0) {
@@ -209,14 +211,11 @@ public class Ex2 implements Runnable {
      rand  = (int)(Math.random()*(algo.getGraph().nodeSize()-1));
      return rand;
 }
-public static int game_full_move(game_service game ,Arena arena,dw_graph_algorithms algo)
+public static void game_full_move(game_service game ,Arena arena,dw_graph_algorithms algo)
 {
-    int id_agn,counter=0, current_count=0;
+    int id_agn, current_count=0;
     PriorityQueue <CL_Pokemon> Pokemons_pri = new PriorityQueue<>();
-    arena.setPokemons( arena.json2Pokemons(game.getPokemons()));
-    for (CL_Pokemon poke:arena.getPokemons()) {
-       poke.set_edge(Arena.correct_pokemon_edge(algo.getGraph(), poke));
-    }
+    arena.setPokemons( arena.json2Pokemons_update(game.getPokemons(), algo.getGraph()));
     arena.get_Agents_update(game.getAgents());
     arena.setAgents(arena.getAgents(game.getAgents(), algo.getGraph()));
     for (CL_Agent agn:arena.get_Agents_info().values()) {
@@ -237,6 +236,7 @@ public static int game_full_move(game_service game ,Arena arena,dw_graph_algorit
         int dest_node = poki_temp.get_edge().getSrc();
         List<node_data> node_list = algo.shortestPath(src_node,dest_node);
         agn_temp.setPoint_arg(node_list,poki_temp.get_edge().getDest());
+        agn_temp.setNode_counter(1);
 
     }
     for (CL_Agent agn_go:arena.get_Agents_info().values()) {
@@ -247,16 +247,53 @@ public static int game_full_move(game_service game ,Arena arena,dw_graph_algorit
             { int next_node = agn_go.getPoint_arg().get(current_count);
             agn_go.add_node_count();
             game.chooseNextEdge(agn_go.getID(),next_node);
-            counter++;}
+           }
             else
             {
                 agn_go.set_curr_fruit(null);
             }
         }
-
     }
-return counter;
 }
+    public static void game_full_move_2(game_service game ,Arena arena,dw_graph_algorithms algo)
+    {
+        int current_count=0;
+       ArrayList <CL_Pokemon> Pokemons_list = new ArrayList<>();
+        arena.setPokemons( arena.json2Pokemons_update(game.getPokemons(), algo.getGraph()));
+        arena.get_Agents_update(game.getAgents());
+        for (CL_Pokemon poki: arena.getPokemons()) {
+            if(!arena.pokemon_in_search(poki))
+            { Pokemons_list.add(poki); }
+        }
+        for (int i = 0; i <arena.get_Agents_info().size() ; i++) {
+            if(Pokemons_list.isEmpty())
+                break;
+            CL_Agent agn_temp = arena.get_Agents_info().get(i);
+            if(agn_temp.get_curr_fruit()==null && agn_temp.getNextNode() ==-1) {
+                CL_Pokemon poki_temp = arena.closest_pokemon(agn_temp, Pokemons_list, algo);
+                agn_temp.set_curr_fruit(poki_temp);
+                int src_node = agn_temp.getSrcNode();
+                int dest_node = poki_temp.get_edge().getSrc();
+                List<node_data> node_list = algo.shortestPath(src_node, dest_node);
+                agn_temp.setPoint_arg(node_list, poki_temp.get_edge().getDest());
+                agn_temp.setNode_counter(1);
+            }
+        }
+        for (CL_Agent agn_go:arena.get_Agents_info().values()) {
+            if(agn_go.get_curr_fruit()!=null && agn_go.getNextNode()==-1) {
+                current_count = agn_go.getNode_counter();
+                if(agn_go.getNode_counter()<agn_go.getPoint_arg().size())
+                { int next_node = agn_go.getPoint_arg().get(current_count);
+                    agn_go.add_node_count();
+                    game.chooseNextEdge(agn_go.getID(),next_node);
+                }
+                else
+                {
+                    agn_go.set_curr_fruit(null);
+                }
+            }
 
+        }
+    }
 
 }

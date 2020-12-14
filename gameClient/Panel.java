@@ -39,7 +39,6 @@ public class Panel extends JPanel{
         this.ar = ar;
         updateFrame();
 
-
     }
 
     private void updateFrame() {
@@ -108,7 +107,7 @@ public class Panel extends JPanel{
 
                     geo_location location = this._w2f.world2frame(c);
                     g.fillOval((int)location.x()-r, (int)location.y()-r, 2*r, 2*r);
-                    g.setColor( new Color(0x0C0C10));
+                    g.setColor( new Color(0xE5E5EA));
                     g.drawString("val-"+poki.getValue(),(int)location.x()-2*r, (int)location.y()-r );
                 }
             }
@@ -151,7 +150,7 @@ public class Panel extends JPanel{
         g.drawLine((int)s0.x(), (int)s0.y(), (int)d0.x(), (int)d0.y());
 
        // g.drawString(""+e.getWeight(),);
-        //	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
+        // 	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
     }
 
     private void clock(Graphics g){
@@ -167,7 +166,6 @@ public class Panel extends JPanel{
 private void drawTitle(Graphics g){
     g.setColor(new Color(218, 229, 227));
     g.setFont(new Font("Wide Latin", Font.BOLD, 25) );
-
     g.drawString("-pokemon game-",350,50);
 
 }

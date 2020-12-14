@@ -2,7 +2,7 @@ package gameClient;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
+
 
 public class frame extends JFrame {
     Panel panel;
@@ -13,11 +13,14 @@ public class frame extends JFrame {
         this.setTitle("liel & rivka");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBackground(Color.BLACK);
-       ImageIcon image =new ImageIcon("./resourses/logo.png");
+       ImageIcon image =new ImageIcon("./resourses/pica.png");
+        this.setIconImage(image.getImage());
 
         panel = new Panel();
         this.add(panel);
         this.setVisible(true);
 
     }
+
+
 }

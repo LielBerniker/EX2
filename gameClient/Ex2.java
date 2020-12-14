@@ -2,7 +2,6 @@ package gameClient;
 
 import Server.Game_Server_Ex2;
 import api.*;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

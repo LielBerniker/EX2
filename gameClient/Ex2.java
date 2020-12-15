@@ -65,7 +65,7 @@ public class Ex2 implements Runnable {
         game1.startGame();
        // _screen.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game1.toString());
         int ind=0;
-        long dt=150;
+        long dt=120;
 
         while (game1.isRunning())
         {
@@ -78,7 +78,7 @@ public class Ex2 implements Runnable {
                     if (ind % 1 == 0) {
                         _screen.repaint();
                     }
-                    Thread.sleep(dt-(10*speed_all));
+                    Thread.sleep(dt-((10-speed_all)*speed_all)-1);
                                      ind++;
                                }
                               catch(Exception e) {

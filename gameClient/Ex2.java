@@ -21,7 +21,7 @@ public class Ex2 implements Runnable {
     }
     @Override
     public void run() {
-        int scenario ;
+        int scenario,speed_all ;
         boolean flag;
         Scanner myObj = new Scanner(System.in);  // Create a Scanner object
         do {
@@ -65,29 +65,25 @@ public class Ex2 implements Runnable {
         game1.startGame();
        // _screen.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game1.toString());
         int ind=0;
-        long dt=500;
+        long dt=150;
 
         while (game1.isRunning())
         {
-            game1.move();
             //todo
            game_arena.setTime(game1.timeToEnd()/1000);
-
-           game_full_move_2(game1,game_arena,algo_run);
-            { game1.move();
-            }
-
+           speed_all = game_full_move_2(game1,game_arena,algo_run);
+            game1.move();
+            System.out.println(game1.getAgents());
                 try {
                     if (ind % 1 == 0) {
                         _screen.repaint();
                     }
-                    Thread.sleep(dt);
+                    Thread.sleep(dt-(10*speed_all));
                                      ind++;
                                }
                               catch(Exception e) {
                                   e.printStackTrace();
                              }
-
             }
         String res = game1.toString();
 
@@ -242,7 +238,6 @@ public static void game_full_move(game_service game ,Arena arena,dw_graph_algori
     for (CL_Agent agn_go:arena.get_Agents_info().values()) {
         if(agn_go.get_curr_fruit()!=null && agn_go.getNextNode()==-1) {
             current_count = agn_go.getNode_counter();
-            System.out.println(current_count);
             if(agn_go.getNode_counter()<agn_go.getPoint_arg().size())
             { int next_node = agn_go.getPoint_arg().get(current_count);
             agn_go.add_node_count();
@@ -255,9 +250,10 @@ public static void game_full_move(game_service game ,Arena arena,dw_graph_algori
         }
     }
 }
-    public static void game_full_move_2(game_service game ,Arena arena,dw_graph_algorithms algo)
+    public static int game_full_move_2(game_service game ,Arena arena,dw_graph_algorithms algo)
     {
-        int current_count=0;
+        double all_speed=0;
+        int current_count=0,avg_speed;
        ArrayList <CL_Pokemon> Pokemons_list = new ArrayList<>();
         arena.setPokemons( arena.json2Pokemons_update(game.getPokemons(), algo.getGraph()));
         arena.get_Agents_update(game.getAgents());
@@ -265,9 +261,10 @@ public static void game_full_move(game_service game ,Arena arena,dw_graph_algori
             if(!arena.pokemon_in_search(poki))
             { Pokemons_list.add(poki); }
         }
+
         for (int i = 0; i <arena.get_Agents_info().size() ; i++) {
             CL_Agent agn_temp = arena.get_Agents_info().get(i);
-            if(agn_temp.get_curr_fruit()==null && agn_temp.getNextNode() ==-1) {
+            if(agn_temp.get_curr_fruit()==null) {
                 if(!Pokemons_list.isEmpty()) {
                     CL_Pokemon poki_temp = arena.closest_pokemon(agn_temp, Pokemons_list, algo);
                     agn_temp.set_curr_fruit(poki_temp);
@@ -278,7 +275,7 @@ public static void game_full_move(game_service game ,Arena arena,dw_graph_algori
                     agn_temp.setNode_counter(1);
                 }
             }
-            else if (agn_temp.get_curr_fruit()!=null && agn_temp.getNextNode()==-1)
+            if (agn_temp.get_curr_fruit()!=null && agn_temp.getNextNode()==-1)
             {
                 current_count = agn_temp.getNode_counter();
                 if(agn_temp.getNode_counter()<agn_temp.getPoint_arg().size())
@@ -290,8 +287,13 @@ public static void game_full_move(game_service game ,Arena arena,dw_graph_algori
                 {
                     agn_temp.set_curr_fruit(null);
                 }
+
+              }
+            all_speed = all_speed + agn_temp.getSpeed();
             }
+        avg_speed =(int)(all_speed/arena.get_Agents_info().size());
+        return avg_speed;
         }
     }
 
-}
+

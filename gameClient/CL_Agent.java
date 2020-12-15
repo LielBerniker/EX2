@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class CL_Agent {
-	public static final double EPS = 0.0001;
+	public static final double EPS = 0.001;
 	private static int _count = 0;
 	private static int _seed = 3331;
 

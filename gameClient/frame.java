@@ -13,7 +13,7 @@ public class frame extends JFrame {
         this.setTitle("liel & rivka");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBackground(Color.BLACK);
-       ImageIcon image =new ImageIcon("./resourses/pica.png");
+       ImageIcon image =new ImageIcon("./src/resources/pocadoor.jpg");
         this.setIconImage(image.getImage());
 
         panel = new Panel();

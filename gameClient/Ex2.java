@@ -69,7 +69,7 @@ public class Ex2 implements Runnable {
 
         while (game1.isRunning())
         {
-            //todo
+
            game_arena.setTime(game1.timeToEnd()/1000);
            speed_all = game_full_move_2(game1,game_arena,algo_run);
             game1.move();

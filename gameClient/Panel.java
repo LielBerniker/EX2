@@ -7,10 +7,16 @@ import gameClient.util.Range;
 import gameClient.util.Range2D;
 import gameClient.util.Range2Range;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageConsumer;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -56,12 +62,13 @@ public class Panel extends JPanel{
 
         updateFrame();
 
-        drawPokemons(g);
         drawGraph(g);
+        drawPokemons(g);
         drawAgants(g);
         drawInfo(g);
         clock(g);
         drawTitle(g);
+
 
     }
     private void drawInfo(Graphics g) {
@@ -100,19 +107,38 @@ public class Panel extends JPanel{
 
                 CL_Pokemon poki = itr.next();
                 Point3D c = poki.getLocation();
-                int r=10;
-                g.setColor(Color.green);
-                if(poki.getType()<0) {g.setColor(Color.orange);}
+                int r=20;
                 if(c!=null) {
-
                     geo_location location = this._w2f.world2frame(c);
-                    g.fillOval((int)location.x()-r, (int)location.y()-r, 2*r, 2*r);
-                    g.setColor( new Color(0xE5E5EA));
-                    g.drawString("val-"+poki.getValue(),(int)location.x()-2*r, (int)location.y()-r );
+
+                    if (poki.getType() < 0) {
+                        try {
+                            BufferedImage img = ImageIO.read(new File("./src/resources/pica.png"));
+                            g.drawImage(img, (int) location.x()-r , (int) location.y() - r, 25, 25, null);
+                            g.setColor( new Color(0xE5E5EA));
+                            g.setFont(new Font("Wide Latin",Font.BOLD,10));
+                            g.drawString("val-"+poki.getValue(),(int)location.x()-20, (int)location.y()-22 );
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                    }else{
+                        try {
+                            BufferedImage img = ImageIO.read(new File("./src/resources/balvazor.jpg"));
+                            g.drawImage(img, (int) location.x()-r , (int) location.y()-r , 25, 25, null);
+                            g.setColor( new Color(0xE5E5EA));
+                            g.setFont(new Font("Wide Latin",Font.BOLD,10));
+                            g.drawString("val-"+poki.getValue(),(int)location.x()-20, (int)location.y()-22 );
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+
+                    }
+                }
+
                 }
             }
         }
-    }
+
     private void drawAgants(Graphics g) {
         HashMap<Integer,CL_Agent> rs = this.ar.get_Agents_info();
         //	Iterator<OOP_Point3D> itr = rs.iterator();
@@ -127,9 +153,17 @@ public class Panel extends JPanel{
             if(gl!=null) {
 
                 geo_location fp = this._w2f.world2frame(gl);
-                g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
-                g.setColor( new Color(0x10C6B0));
-                g.drawString(""+agent.getID(),(int)fp.x()-5, (int)fp.y()+5);
+
+                try {
+                    BufferedImage img = ImageIO.read(new File("./src/resources/ash face.gif"));
+
+                    g.drawImage(img,(int)fp.x()-r,(int)fp.y()-r,30,30,null);
+                }
+                catch (IOException ex){
+                    ex.printStackTrace();
+                }
+                g.setColor( new Color(0xDEECEA));
+                g.drawString(""+agent.getID(),(int)fp.x()-5, (int)fp.y()-5);
             }
             i++;
         }
@@ -149,24 +183,27 @@ public class Panel extends JPanel{
         geo_location d0 = this._w2f.world2frame(d);
         g.drawLine((int)s0.x(), (int)s0.y(), (int)d0.x(), (int)d0.y());
 
-       // g.drawString(""+e.getWeight(),);
-        // 	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
     }
 
     private void clock(Graphics g){
 
         g.setColor(new Color(65, 173, 69));
         g.drawOval(20,20,60,60);
-        g.fillOval(20,20,60,60);
-        g.setColor(new Color(3, 3, 3));
+        g.setColor(new Color(246, 242, 242));
         g.setFont(new Font("Wide Latin", Font.BOLD, 20) );
         g.drawString(""+ar.getTime(),38,57);
 
     }
-private void drawTitle(Graphics g){
-    g.setColor(new Color(218, 229, 227));
-    g.setFont(new Font("Wide Latin", Font.BOLD, 25) );
-    g.drawString("-pokemon game-",350,50);
+private void drawTitle(Graphics g)  {
+
+    try {
+        BufferedImage img = ImageIO.read(new File("./src/resources/Pokemon-Symbol.jpg"));
+
+        g.drawImage(img,300,25,300,150,null);
+    }
+    catch (IOException ex){
+        ex.printStackTrace();
+    }
 
 }
 

@@ -30,7 +30,7 @@ public class Arena {
 
 	private HashMap<Integer,CL_Agent> agents_information;
 
-	public Arena() {;
+	public Arena() {
 		_info = new ArrayList<String>();
 		agents_information = new HashMap<Integer, CL_Agent>();
 		time=0;

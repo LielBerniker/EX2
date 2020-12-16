@@ -40,13 +40,20 @@ public class Panel extends JPanel{
 
     }
 
-
+    /**
+     * updating the arena by calling updateFrame()
+     * @param  ar
+     */
     public void update(Arena ar) {
         this.ar = ar;
         updateFrame();
 
     }
 
+    /**
+     * setting frame range
+     * making adjustment between world range and frame range
+     */
     private void updateFrame() {
         Range rx = new Range(20,this.getWidth()-20);
         Range ry = new Range(this.getHeight()-10,150);
@@ -55,10 +62,13 @@ public class Panel extends JPanel{
         _w2f = Arena.w2f(g,frame);
     }
 
-
+    /**
+     *  build the arena
+     * @param g
+     */
     public void paint(Graphics g) {
-        int w = this.getWidth();
-        int h = this.getHeight();
+        //int w = this.getWidth();
+        //int h = this.getHeight();
 
         updateFrame();
 
@@ -66,11 +76,16 @@ public class Panel extends JPanel{
         drawPokemons(g);
         drawAgants(g);
         drawInfo(g);
-        clock(g);
+        drawClock(g);
         drawTitle(g);
 
 
     }
+
+    /**
+     *
+     * @param g
+     */
     private void drawInfo(Graphics g) {
         List<String> info = this.ar.get_info();
         String dt = "none";
@@ -82,22 +97,33 @@ public class Panel extends JPanel{
         }
 
     }
+
+    /**
+     * drawing the graph with drawNode and drawEdge
+     * @param g
+     */
     private void drawGraph(Graphics g) {
         directed_weighted_graph gg = this.ar.getGraph();
-        Iterator<node_data> iter = gg.getV().iterator();
-        while(iter.hasNext()) {
-            node_data n = iter.next();
+        Iterator<node_data> node_iter = gg.getV().iterator();
+        while(node_iter.hasNext()) {
+            node_data n = node_iter.next();
             g.setColor(Color.white);
-            drawNode(n,5,g);
-            Iterator<edge_data> itr = gg.getE(n.getKey()).iterator();
-            while(itr.hasNext()) {
-                edge_data e = itr.next();
+            drawNode(n,6,g);
+            Iterator<edge_data> edge_iter = gg.getE(n.getKey()).iterator();
+            while(edge_iter.hasNext()) {
+                edge_data e = edge_iter.next();
                 g.setColor(Color.white);
                 drawEdge(e, g);
 
             }
         }
     }
+
+    /**
+     * drawing the Pokemons and their value on the graph
+     * draws balvazor or piccasho according to their position on the graph edges.
+     * @param g
+     */
     private void drawPokemons(Graphics g) {
         List<CL_Pokemon> pokemons = this.ar.getPokemons();
         if(pokemons!=null) {
@@ -110,7 +136,7 @@ public class Panel extends JPanel{
                 int r=20;
                 if(c!=null) {
                     geo_location location = this._w2f.world2frame(c);
-
+                    //if src of pokemon edge is grater then the dest
                     if (poki.getType() < 0) {
                         try {
                             BufferedImage img = ImageIO.read(new File("./src/resources/pica.png"));
@@ -121,6 +147,7 @@ public class Panel extends JPanel{
                         } catch (IOException ex) {
                             ex.printStackTrace();
                         }
+                        //if dest grater then src
                     }else{
                         try {
                             BufferedImage img = ImageIO.read(new File("./src/resources/balvazor.jpg"));
@@ -139,19 +166,21 @@ public class Panel extends JPanel{
             }
         }
 
+    /**
+     * drawing the agents and their id on the graph
+     * @param g
+     */
     private void drawAgants(Graphics g) {
         HashMap<Integer,CL_Agent> rs = this.ar.get_Agents_info();
         //	Iterator<OOP_Point3D> itr = rs.iterator();
-
         int i=0;
         while(rs!=null && i<rs.size()) {
-            g.setColor(Color.red);
             CL_Agent agent=rs.get(i);
             geo_location gl = agent.getLocation();
             int r=8;
 
             if(gl!=null) {
-
+                //operating world_to_frame on the agent geo_location
                 geo_location fp = this._w2f.world2frame(gl);
 
                 try {
@@ -168,13 +197,25 @@ public class Panel extends JPanel{
             i++;
         }
     }
+
+    /**
+     * drowing node of the graph
+     * @param n
+     * @param r
+     * @param g
+     */
     private void drawNode(node_data n, int r, Graphics g) {
         geo_location pos = n.getLocation();
-        geo_location fp = this._w2f.world2frame(pos);
-        g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
-        g.drawString(""+n.getKey(), (int)fp.x(), (int)fp.y()-4*r);
+        geo_location gl = this._w2f.world2frame(pos);
+        g.fillOval((int)gl.x()-r, (int)gl.y()-r, 2*r, 2*r);
+        g.drawString(""+n.getKey(), (int)gl.x(), (int)gl.y()-4*r);
     }
 
+    /**
+     * drowing edge of the graph
+     * @param e
+     * @param g
+     */
     private void drawEdge(edge_data e, Graphics g) {
         directed_weighted_graph gg = this.ar.getGraph();
         geo_location s = gg.getNode(e.getSrc()).getLocation();
@@ -185,7 +226,11 @@ public class Panel extends JPanel{
 
     }
 
-    private void clock(Graphics g){
+    /**
+     * add clock to arena showing the remaining time to the game
+     * @param g
+     */
+    private void drawClock(Graphics g){
 
         g.setColor(new Color(65, 173, 69));
         g.drawOval(20,20,60,60);
@@ -194,7 +239,12 @@ public class Panel extends JPanel{
         g.drawString(""+ar.getTime(),38,57);
 
     }
-private void drawTitle(Graphics g)  {
+
+    /**
+     * adding title to arena
+     * @param g
+     */
+    private void drawTitle(Graphics g)  {
 
     try {
         BufferedImage img = ImageIO.read(new File("./src/resources/Pokemon-Symbol.jpg"));

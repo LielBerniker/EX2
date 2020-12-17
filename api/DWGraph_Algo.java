@@ -157,16 +157,11 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     @Override
     public double shortestPathDist(int src, int dest) {
         HashMap<Integer,node_extend> dis_and_par ;
-        if (Graph1 == null)
-            return -1;
-        if (Graph1.nodeSize() == 0)
-            return -1;
-        // if one of the vertices not in the graph return -1
-        if (Graph1.getNode(src) == null || Graph1.getNode(dest) == null)
+        if (Graph1 == null || Graph1.nodeSize() == 0 ||Graph1.getNode(src) == null || Graph1.getNode(dest) == null)
             return -1;
         dis_and_par = short_path_by_edge(src, dest);
         // return the dest vertex shortest path from src
-        if (dis_and_par.get(dest).getDistance() == Integer.MAX_VALUE)
+        if (dis_and_par.get(dest)==null)
             return -1;
         else
             return dis_and_par.get(dest).getDistance();
@@ -186,24 +181,19 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         LinkedList<node_data> path_list2 = new LinkedList<node_data>();
         HashMap<Integer,node_extend> full_path ;
         String prev;
-        if (Graph1 == null)
-            return path_list1;
-        if (Graph1.getNode(src) == null || Graph1.getNode(dest) == null)
-            return path_list1;
+        if (Graph1 == null || Graph1.getNode(src) == null || Graph1.getNode(dest) == null)
+            return null;
         full_path = short_path_by_edge(src, dest);
-        if (full_path.get(dest).getDistance() == Integer.MAX_VALUE)
-            return path_list1;
+        if (full_path.get(dest) == null)
+            return null;
         prev = full_path.get(dest).getParent();
         path_list1.add(Graph1.getNode(dest));
         while (!prev.equals("")) {
             path_list1.add(Graph1.getNode(Integer.parseInt(prev)));
             prev = full_path.get(Integer.parseInt(prev)).getParent();
         }
-        while (!path_list1.isEmpty()) {
-            path_list2.add(path_list1.getLast());
-            path_list1.remove(path_list1.getLast());
-        }
-        return path_list2;
+        Collections.reverse(path_list1);
+        return path_list1;
 
     }
     /**
@@ -235,11 +225,6 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         if (src == dest) {
             return prev_contain;
         }
-        for (node_data current_node : Graph1.getV()) {
-            if(current_node.getKey()!=src)
-            { node_extend extend_temp2 = new node_extend(current_node);
-            prev_contain.put(extend_temp2.getKey(),extend_temp2);}
-        }
         // run until sets every node in the path
         while (!node_prior.isEmpty()) {
             // get closest node in queue to src node
@@ -250,6 +235,9 @@ public class DWGraph_Algo implements dw_graph_algorithms {
                 // go over the node neighbors
                 for (edge_data neighbor_node : Graph1.getE(node_key)) {
                     neighbor_key = neighbor_node.getDest();
+                    if(prev_contain.get(neighbor_key)==null)
+                    {extend_temp1 = new node_extend(getGraph().getNode(neighbor_key));
+                    prev_contain.put(neighbor_key,extend_temp1);}
                     // if the neighbor vertex current distance is higher than the current node + edge , replace it
                     if (prev_contain.get(neighbor_key).getDistance() > prev_contain.get(node_key).getDistance() + neighbor_node.getWeight())
                     {// change the node distance from src and update it at the collection

@@ -14,26 +14,18 @@ public class Ex2 implements Runnable {
     private static frame _screen;
     private Arena game_arena;
     public static void main(String[] a) throws IOException {
-
         Thread user = new Thread(new Ex2());
         user.start();
 
     }
     @Override
     public void run() {
-        int scenario,speed_all ;
-        boolean flag;
-        Scanner myObj = new Scanner(System.in);  // Create a Scanner object
-        do {
-            System.out.println("Please enter scenario");
-            scenario = myObj.nextInt();  // Read user input
-            if (scenario<0 || scenario>23)
-            {
-                System.out.println("there is no scenario " + scenario);
-                flag = false;
-            }
-            else flag = true;
-        }while (flag==false);
+        int scenario,speed_all , ind=0;
+        long dt=140,sleep_change=0l, time_to,change=0;
+        boolean on_edge;
+        // user insert a scenario
+       scenario = scenario_input();
+
         //System.out.println("Please enter use id");
         //int id = myObj.nextInt();  // Read user input
 
@@ -42,43 +34,39 @@ public class Ex2 implements Runnable {
         dw_graph_algorithms algo_run = new DWGraph_Algo();// graph algorithms to help create a graph and use more function on it
         game_service game1 = Game_Server_Ex2.getServer(scenario);// the game level
 
+        // login to the game with id
         game1.login(id);
         try {
+            // initiate the graph by the information from the game
             init_graph_to_algo(scenario,game1,algo_run);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        game_arena.setGraph(algo_run.getGraph());
         System.out.println(game1);
+        // create a  Priority Queue of Pokemons by their value
         PriorityQueue <CL_Pokemon> Pokemons_pri = init_pokemones(game1,game_arena,algo_run);// collection of pokemos by their value
         try {
+            // add agents to the game next to the pokemons in the  Priority Queue
             add_all_agents(game_arena,game1,Pokemons_pri,algo_run);// collection of pokemons that been search by an agent
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        game_arena.setGraph(algo_run.getGraph());
-        _screen = new frame("test Ex2");
-        _screen.setSize(1000, 700);
-        _screen.panel.update(game_arena);
-
-
-        _screen.show();
+        // set the arena graph
+       init_screen(game_arena);
         game1.startGame();
-       // _screen.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game1.toString());
-        int ind=0;
-        long dt=120;
-
+        double time = game1.timeToEnd()/1000;
         while (game1.isRunning())
         {
-
-           game_arena.setTime(game1.timeToEnd()/1000);
-           speed_all = game_full_move_2(game1,game_arena,algo_run);
+             time_to=(game1.timeToEnd()/1000);
+           game_arena.setTime(time_to);
+         game_full_move(game1,game_arena,algo_run);
             game1.move();
             System.out.println(game1.getAgents());
                 try {
-                    if (ind % 1 == 0) {
                         _screen.repaint();
-                    }
-                    Thread.sleep(dt-((10-speed_all)*speed_all)-1);
+
+                    Thread.sleep(100);
                                      ind++;
                                }
                               catch(Exception e) {
@@ -86,12 +74,9 @@ public class Ex2 implements Runnable {
                              }
             }
         String res = game1.toString();
-
         System.out.println(res);
         System.exit(0);
     }
-
-
 
     /**
      * the function set the graph in the algo , to the graph of the number of the level
@@ -107,6 +92,7 @@ public class Ex2 implements Runnable {
 {
     String level_graph = game1.getGraph();
     try {
+        // write the graph into a file
         BufferedWriter writer = new BufferedWriter(new FileWriter("level_"+Integer.toString(level)));
         writer.write(level_graph);
         writer.close();
@@ -114,6 +100,7 @@ public class Ex2 implements Runnable {
     catch (IOException e) {
         e.printStackTrace();
     }
+    // load the graph into thr graph algo
     algo1.load("level_"+Integer.toString(level));
 }
 
@@ -130,13 +117,11 @@ public class Ex2 implements Runnable {
     public static PriorityQueue<CL_Pokemon> init_pokemones(game_service game1, Arena arena,dw_graph_algorithms algo)
 {
     PriorityQueue <CL_Pokemon> Pokemons_pri = new PriorityQueue<CL_Pokemon>();
-    ArrayList<CL_Pokemon> pokemons= arena.json2Pokemons(game1.getPokemons());
+    ArrayList<CL_Pokemon> pokemons= arena.json2Pokemons_update(game1.getPokemons());
     // go over the pokemons list an insert them into a  Priority Queue
     Iterator<CL_Pokemon> it = pokemons.iterator();
     while(it.hasNext()) {
         CL_Pokemon pokemon_go =it.next();
-        // set the pokemon edge before the insert to the Priority Queue
-        pokemon_go.set_edge(arena.correct_pokemon_edge(algo.getGraph(),pokemon_go));
         Pokemons_pri.add(pokemon_go);
     }
     arena.setPokemons(pokemons);
@@ -156,7 +141,7 @@ public class Ex2 implements Runnable {
      * @return
      */
     public static void add_all_agents(Arena arena, game_service game ,PriorityQueue<CL_Pokemon> pokemons_order, dw_graph_algorithms algo) throws JSONException {
-    boolean agent_add=true;
+
     CL_Pokemon poki_temp;
     int  rand;
     rand = random_node(algo);
@@ -178,16 +163,15 @@ public class Ex2 implements Runnable {
         else
         {  // add agent random
             rand = random_node(algo);
-            agent_add =  game.addAgent(rand);}
+            game.addAgent(rand);}
     }
-    arena.init_Agents_by_game(game.getAgents(),algo.getGraph());
+    arena.init_Agents_by_game(game.getAgents());
 
     // go over the agents and set their pokemon
     for (int i = 0; i <arena.get_Agents_info().size() ; i++) {
         arena.get_Agents_info().get(i).set_curr_fruit(look_for_pokemons.poll());
         CL_Agent agn_temp = arena.get_Agents_info().get(i);
         CL_Pokemon poki2 = agn_temp.get_curr_fruit();
-
         int src_node = agn_temp.getSrcNode();
         int dest_node = poki2.get_edge().getSrc();
         List<node_data> node_list = algo.shortestPath(src_node,dest_node);
@@ -207,63 +191,20 @@ public class Ex2 implements Runnable {
      rand  = (int)(Math.random()*(algo.getGraph().nodeSize()-1));
      return rand;
 }
-public static void game_full_move(game_service game ,Arena arena,dw_graph_algorithms algo)
-{
-    int id_agn, current_count=0;
-    PriorityQueue <CL_Pokemon> Pokemons_pri = new PriorityQueue<>();
-    arena.setPokemons( arena.json2Pokemons_update(game.getPokemons(), algo.getGraph()));
-    arena.get_Agents_update(game.getAgents());
-    arena.setAgents(arena.getAgents(game.getAgents(), algo.getGraph()));
-    for (CL_Agent agn:arena.get_Agents_info().values()) {
-        if(!arena.pokemon_contain(agn))
-            arena.get_Agents_info().get(agn.getID()).set_curr_fruit(null);
-    }
-    for (CL_Pokemon poki: arena.getPokemons()) {
-       if(!arena.pokemon_in_search(poki))
-        { Pokemons_pri.add(poki); }
-    }
-    while(arena.available_agents())
-    {
-        CL_Pokemon poki_temp = Pokemons_pri.poll();
-        id_agn = arena.closest_agents(poki_temp,algo);
-        CL_Agent agn_temp = arena.get_Agents_info().get(id_agn);
-        agn_temp.set_curr_fruit(poki_temp);
-        int src_node = agn_temp.getSrcNode();
-        int dest_node = poki_temp.get_edge().getSrc();
-        List<node_data> node_list = algo.shortestPath(src_node,dest_node);
-        agn_temp.setPoint_arg(node_list,poki_temp.get_edge().getDest());
-        agn_temp.setNode_counter(1);
-
-    }
-    for (CL_Agent agn_go:arena.get_Agents_info().values()) {
-        if(agn_go.get_curr_fruit()!=null && agn_go.getNextNode()==-1) {
-            current_count = agn_go.getNode_counter();
-            if(agn_go.getNode_counter()<agn_go.getPoint_arg().size())
-            { int next_node = agn_go.getPoint_arg().get(current_count);
-            agn_go.add_node_count();
-            game.chooseNextEdge(agn_go.getID(),next_node);
-           }
-            else
-            {
-                agn_go.set_curr_fruit(null);
-            }
-        }
-    }
-}
-    public static int game_full_move_2(game_service game ,Arena arena,dw_graph_algorithms algo)
+    public static int game_full_move(game_service game ,Arena arena,dw_graph_algorithms algo)
     {
         double all_speed=0;
         int current_count=0,avg_speed;
        ArrayList <CL_Pokemon> Pokemons_list = new ArrayList<>();
-        arena.setPokemons( arena.json2Pokemons_update(game.getPokemons(), algo.getGraph()));
+        arena.setPokemons( arena.json2Pokemons_update(game.getPokemons()));
         arena.get_Agents_update(game.getAgents());
         for (CL_Pokemon poki: arena.getPokemons()) {
             if(!arena.pokemon_in_search(poki))
             { Pokemons_list.add(poki); }
         }
 
-        for (int i = 0; i <arena.get_Agents_info().size() ; i++) {
-            CL_Agent agn_temp = arena.get_Agents_info().get(i);
+        for (CL_Agent agn_temp:arena.get_Agents_info().values())
+            {
             if(agn_temp.get_curr_fruit()==null) {
                 if(!Pokemons_list.isEmpty()) {
                     CL_Pokemon poki_temp = arena.closest_pokemon(agn_temp, Pokemons_list, algo);
@@ -291,8 +232,31 @@ public static void game_full_move(game_service game ,Arena arena,dw_graph_algori
               }
             all_speed = all_speed + agn_temp.getSpeed();
             }
-        avg_speed =(int)(all_speed/arena.get_Agents_info().size());
-        return avg_speed;
+        return ((int)(Math.ceil(all_speed/arena.get_Agents_info().size())));
+        }
+        public static int scenario_input()
+        {
+            int scenario;
+            boolean flag;
+            Scanner myObj = new Scanner(System.in);  // Create a Scanner object
+            do {
+                System.out.println("Please enter scenario");// choose a scenario for the game
+                 scenario = myObj.nextInt();  // Read user input
+                if (scenario<0 || scenario>23)
+                {
+                    System.out.println("there is no scenario " + scenario);
+                    flag = false;
+                }
+                else flag = true;
+            }while (flag==false);
+            return scenario;
+        }
+        public static void init_screen(Arena game_arena)
+        {
+            _screen = new frame("test Ex2");
+            _screen.setSize(1000, 700);
+            _screen.panel.update(game_arena);
+            _screen.show();
         }
     }
 

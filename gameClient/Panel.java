@@ -199,7 +199,7 @@ public class Panel extends JPanel{
     }
 
     /**
-     * drowing node of the graph
+     * drawing node of the graph
      * @param n
      * @param r
      * @param g
@@ -212,7 +212,7 @@ public class Panel extends JPanel{
     }
 
     /**
-     * drowing edge of the graph
+     * drawing edge of the graph
      * @param e
      * @param g
      */

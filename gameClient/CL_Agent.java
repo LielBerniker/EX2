@@ -16,7 +16,6 @@ public class CL_Agent {
 	private static int _count = 0;
 	private static int _seed = 3331;
 
-	//	private long _key;
 	private edge_data _curr_edge;
 	private long _sg_dt;
 
@@ -46,20 +45,19 @@ public class CL_Agent {
 	public void update(String json) {
 		JSONObject line;
 		try {
-			// "GameServer":{"graph":"A0","pokemons":3,"agents":1}}
 			line = new JSONObject(json);
-			JSONObject ttt = line.getJSONObject("Agent");
-			int id = ttt.getInt("id");
+			JSONObject agent_j = line.getJSONObject("Agent");
+			int id = agent_j.getInt("id");
 			if (id == this.getID() || this.getID() == -1) {
 				if (this.getID() == -1) {
 					_id = id;
 				}
-				double speed = ttt.getDouble("speed");
-				String p = ttt.getString("pos");
+				double speed = agent_j.getDouble("speed");
+				String p = agent_j.getString("pos");
 				Point3D pp = new Point3D(p);
-				int src = ttt.getInt("src");
-				int dest = ttt.getInt("dest");
-				double value = ttt.getDouble("value");
+				int src = agent_j.getInt("src");
+				int dest = agent_j.getInt("dest");
+				double value = agent_j.getDouble("value");
 				this._pos = pp;
 				this.setCurrNode(src);
 				this.setSpeed(speed);
@@ -124,21 +122,17 @@ public class CL_Agent {
 	}
 
 	public int getID() {
-		// TODO Auto-generated method stub
 		return this._id;
 	}
 
 	public geo_location getLocation() {
-		// TODO Auto-generated method stub
 		return _pos;
 	}
 
 
 	public double getValue() {
-		// TODO Auto-generated method stub
 		return this._value;
 	}
-
 
 	public int getNextNode() {
 		int ans = -2;
@@ -198,41 +192,25 @@ public class CL_Agent {
 
 	// my area:
 	//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$44
-	public void update_first(String json) {
-		JSONObject line;
-		try {
-			line = new JSONObject(json);
-			JSONObject agents = line.getJSONObject("Agent");
-			int id = agents.getInt("id");
-			if (id == this.getID() || this.getID() == -1) {
-				if (this.getID() == -1) {
-					_id = id;
-				}
-				double speed = agents.getDouble("speed");
-				String p = agents.getString("pos");
-				Point3D pp = new Point3D(p);
-				int src = agents.getInt("src");
-				int dest = agents.getInt("dest");
-				double value = agents.getDouble("value");
-				this._pos = pp;
-				this.setCurrNode(src);
-				this.setSpeed(speed);
-				this.setNextNode(dest);
-				this.setMoney(value);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
+	/**
+	 * sets the position of the agent
+	 * @param p
+	 */
 	public void set_pos(String p) {
 		Point3D pp = new Point3D(p);
 		this._pos = pp;
 	}
 
+	/**
+	 * sets the path of nodes of the agent,by the list of nodes the function gets
+	 * @param node_list
+	 * @param dest
+	 */
 	public void setPoint_arg(List<node_data> node_list, int dest) {
 		int i = 0;
 		this.point_arg.clear();
+		// go over the list a insert the nodes to the agent path collection
 		Iterator<node_data> it = node_list.iterator();
 		while (it.hasNext()) {
 			node_data current_node = it.next();
@@ -243,18 +221,33 @@ public class CL_Agent {
 		this.point_arg.put(i, dest);
 	}
 
+	/**
+	 * return a collection of the nodes in the agents path
+	 * @return
+	 */
 	public HashMap<Integer, Integer> getPoint_arg() {
 		return this.point_arg;
 	}
 
+	/**
+	 * add 1 to the node conter
+	 */
 	public void add_node_count() {
 		this.node_counter++;
 	}
 
+	/**
+	 * return the node counter of the node path of the agent
+	 * @return
+	 */
 	public int getNode_counter() {
 		return this.node_counter;
 	}
 
+	/**
+	 * set the node counter of the node path of agent
+	 * @param node_count
+	 */
 	public void setNode_counter(int node_count) {
       this.node_counter = node_count;
 	}

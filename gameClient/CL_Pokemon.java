@@ -109,11 +109,7 @@ public class CL_Pokemon implements Comparable {
 		CL_Pokemon cop_pokemon = (CL_Pokemon) o;
 		if(this.getValue()!=((CL_Pokemon) o).getValue())
 			return false;
-		if(this.getLocation().x()!=cop_pokemon.getLocation().x())
-			return false;
-		if(this.getLocation().y()!=cop_pokemon.getLocation().y())
-			return false;
-		if(this.getLocation().z()!=cop_pokemon.getLocation().z())
+		if(this.getLocation().x()!=cop_pokemon.getLocation().x() || this.getLocation().y()!=cop_pokemon.getLocation().y() || this.getLocation().z()!=cop_pokemon.getLocation().z())
 			return false;
 		if (this.getType()!=((CL_Pokemon) o).getType())
 			return false;

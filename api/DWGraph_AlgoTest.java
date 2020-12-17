@@ -129,6 +129,7 @@ class DWGraph_AlgoTest {
     @Test
     void shortestPathDist_test() {
         dw_graph_algorithms algo_test = new DWGraph_Algo();
+        assertEquals(-1,algo_test.shortestPathDist(5,7));
         algo_test.init(create_graph1());
         assertEquals(-1,algo_test.shortestPathDist(0,1));
         algo_test.getGraph().connect(0,1,3.4);
@@ -160,6 +161,7 @@ class DWGraph_AlgoTest {
         assertEquals(0,algo_test.shortestPathDist(5,5));
         assertEquals(1,algo_test.shortestPathDist(5,6));
         assertEquals(4,algo_test.shortestPathDist(5,7));
+        assertEquals(-1,algo_test.shortestPathDist(5,10));
     }
 
     /** test for shortest path function that return a list of the vertices in the pah.
@@ -174,9 +176,10 @@ class DWGraph_AlgoTest {
         int[] vertices_path_0_3 = {0,1,6,5,4,2,3};
         int count = 0;
         dw_graph_algorithms algo_test = new DWGraph_Algo();
+        assertNull(algo_test.shortestPath(19,3));
         algo_test.init( create_graph1());
         List<node_data> list_temp = new LinkedList<node_data>();
-        assertEquals(list_temp,algo_test.shortestPath(0,1));
+        assertEquals(null,algo_test.shortestPath(0,1));
         algo_test.init( create_graph2());
         List<node_data> vertices_list1= algo_test.shortestPath(0,7);
         for (node_data current_node: vertices_list1){
@@ -185,7 +188,7 @@ class DWGraph_AlgoTest {
         }
 
         List<node_data> vertices_list2= algo_test.shortestPath(7,0);
-        assertEquals(vertices_path_7_0.length,vertices_list2.size());
+        assertEquals(null,vertices_list2);
 
         List<node_data> vertices_list3= algo_test.shortestPath(5,3);
         count =0;
@@ -200,7 +203,7 @@ class DWGraph_AlgoTest {
             Assertions.assertEquals(vertices_path_0_3[count],current_node.getKey());
             count++;
         }
-
+      assertNull(algo_test.shortestPath(19,3));
     }
 
 

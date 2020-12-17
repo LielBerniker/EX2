@@ -48,6 +48,7 @@ public class CL_Agent {
 	 * update the agent by the json string the function gets
 	 * @param json
 	 */
+
 	public void update(String json) {
 		JSONObject line;
 		try {

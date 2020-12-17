@@ -43,7 +43,6 @@ public class CL_Agent {
 		point_arg = new HashMap<>();
 		node_counter = 0;
 	}
-
 	/**
 	 * update the agent by the json string the function gets
 	 * @param json

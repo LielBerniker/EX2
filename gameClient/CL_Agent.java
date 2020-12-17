@@ -15,10 +15,8 @@ public class CL_Agent {
 	public static final double EPS = 0.001;
 	private static int _count = 0;
 	private static int _seed = 3331;
-
 	private edge_data _curr_edge;
 	private long _sg_dt;
-
 	// my use
 	private directed_weighted_graph _gg;
 	private node_data _curr_node;
@@ -30,7 +28,11 @@ public class CL_Agent {
 	private HashMap<Integer, Integer> point_arg;
 	private int node_counter;
 
-
+	/**
+	 * a constructor of the agent
+	 * @param g
+	 * @param start_node
+	 */
 	public CL_Agent(directed_weighted_graph g, int start_node) {
 		this._gg = g;
 		this._value = 0;
@@ -42,6 +44,10 @@ public class CL_Agent {
 		node_counter = 0;
 	}
 
+	/**
+	 * update the agent by the json string the function gets
+	 * @param json
+	 */
 	public void update(String json) {
 		JSONObject line;
 		try {
@@ -58,6 +64,7 @@ public class CL_Agent {
 				int src = agent_j.getInt("src");
 				int dest = agent_j.getInt("dest");
 				double value = agent_j.getDouble("value");
+				// sets the agent by the information from thr json
 				this._pos = pp;
 				this.setCurrNode(src);
 				this.setSpeed(speed);
@@ -69,11 +76,18 @@ public class CL_Agent {
 		}
 	}
 
-	//@Override
+	/**
+	 * return the agent source node
+	 * @return
+	 */
 	public int getSrcNode() {
 		return this._curr_node.getKey();
 	}
 
+	/**
+	 * return a string of the agent information in a json form
+	 * @return
+	 */
 	public String toJSON() {
 		int d = this.getNextNode();
 		String ans = "{\"Agent\":{"
@@ -88,6 +102,10 @@ public class CL_Agent {
 		return ans;
 	}
 
+	/**
+	 * sets the agent value
+	 * @param v
+	 */
 	public void setMoney(double v) {
 		_value = v;
 	}
@@ -104,6 +122,10 @@ public class CL_Agent {
 		return ans;
 	}
 
+	/**
+	 * sets the agent current node
+	 * @param src
+	 */
 	public void setCurrNode(int src) {
 		this._curr_node = _gg.getNode(src);
 	}
@@ -112,28 +134,51 @@ public class CL_Agent {
 		return this._curr_edge != null;
 	}
 
+	/**
+	 * return a type of json string
+	 * @return
+	 */
 	public String toString() {
 		return toJSON();
 	}
 
+	/**
+	 * return a type of string to print
+	 * @return
+	 */
 	public String toString1() {
 		String ans = "" + this.getID() + "," + _pos + ", " + isMoving() + "," + this.getValue();
 		return ans;
 	}
 
+	/**
+	 * return the agents id
+	 * @return
+	 */
 	public int getID() {
 		return this._id;
 	}
 
+	/**
+	 * return the agent loacation
+	 * @return
+	 */
 	public geo_location getLocation() {
 		return _pos;
 	}
 
-
+	/**
+	 * return the agent value
+	 * @return
+	 */
 	public double getValue() {
 		return this._value;
 	}
 
+	/**
+	 * return the next node in the agents path
+	 * @return
+	 */
 	public int getNextNode() {
 		int ans = -2;
 		if (this._curr_edge == null) {
@@ -144,18 +189,34 @@ public class CL_Agent {
 		return ans;
 	}
 
+	/**
+	 * return the agent speed
+	 * @return
+	 */
 	public double getSpeed() {
 		return this._speed;
 	}
 
+	/**
+	 * sets the agent speed
+	 * @param v
+	 */
 	public void setSpeed(double v) {
 		this._speed = v;
 	}
 
+	/**
+	 * return the current pokemon that the agent is in a search for
+	 * @return
+	 */
 	public CL_Pokemon get_curr_fruit() {
 		return _curr_fruit;
 	}
 
+	/**
+	 * sets the pokemon that the agent is in a search for
+	 * @param curr_fruit
+	 */
 	public void set_curr_fruit(CL_Pokemon curr_fruit) {
 		this._curr_fruit = curr_fruit;
 	}
@@ -178,6 +239,10 @@ public class CL_Agent {
 		this.set_sg_dt(ddt);
 	}
 
+	/**
+	 * sets the agent current edge
+	 * @return
+	 */
 	public edge_data get_curr_edge() {
 		return this._curr_edge;
 	}
@@ -189,9 +254,6 @@ public class CL_Agent {
 	public void set_sg_dt(long _sg_dt) {
 		this._sg_dt = _sg_dt;
 	}
-
-	// my area:
-	//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$44
 
 	/**
 	 * sets the position of the agent

@@ -12,66 +12,62 @@ public class CL_Pokemon implements Comparable {
 	private int _type;
 	private Point3D _pos;
 
-	private double min_dist;
-	private int min_ro;
-	
-	public CL_Pokemon(Point3D p, int t, double v, double s, edge_data e) {
+	/**
+	 * constructor of the pokemon
+	 * @param p
+	 * @param t
+	 * @param v
+	 * @param e
+	 */
+	public CL_Pokemon(Point3D p, int t, double v, edge_data e) {
 		_type = t;
-	//	_speed = s;
 		_value = v;
 		set_edge(e);
 		_pos = p;
-		min_dist = -1;
-		min_ro = -1;
 	}
-	public static CL_Pokemon init_from_json(String json) {
-		CL_Pokemon ans = null;
-		try {
-			JSONObject p = new JSONObject(json);
-			int id = p.getInt("id");
 
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-		return ans;
-	}
+	/**
+	 * return a string of the pokemon information
+	 * @return
+	 */
 	public String toString() {return "F:{v="+_value+", t="+_type+"}";}
+
+	/**
+	 * return the pokemon current edge
+	 * @return
+	 */
 	public edge_data get_edge() {
 		return _edge;
 	}
 
+	/**
+	 * set the pokemon edge
+	 * @param _edge
+	 */
 	public void set_edge(edge_data _edge) {
 		this._edge = _edge;
 	}
 
+	/**
+	 * return the pokemon location
+	 * @return
+	 */
 	public Point3D getLocation() {
 		return _pos;
 	}
+
+	/**
+	 * return the pokemon type
+	 * @return
+	 */
 	public int getType() {return _type;}
-//	public double getSpeed() {return _speed;}
+
+	/**
+	 * return the pokemon value
+	 * @return
+	 */
 	public double getValue() {return _value;}
 
-	public double getMin_dist() {
-		return min_dist;
-	}
-
-	public void setMin_dist(double mid_dist) {
-		this.min_dist = mid_dist;
-	}
-
-	public int getMin_ro() {
-		return min_ro;
-	}
-
-	public void setMin_ro(int min_ro) {
-		this.min_ro = min_ro;
-	}
-
-
-
-	// my area
-	//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 	/**
 	 * a compare to function

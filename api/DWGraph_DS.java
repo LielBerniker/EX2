@@ -14,6 +14,9 @@ public class DWGraph_DS implements directed_weighted_graph {
     private int MC;
     private int Edge_count;
 
+    /**
+     * constructor to the graph
+     */
     public DWGraph_DS()
     {
         this.Graph_nodes = new HashMap<Integer, node_data>();

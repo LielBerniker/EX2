@@ -323,7 +323,7 @@ public class Arena {
 				int t = pk.getInt("type");
 				double v = pk.getDouble("value");
 				String p = pk.getString("pos");
-				CL_Pokemon f = new CL_Pokemon(new Point3D(p), t, v, 0, null);
+				CL_Pokemon f = new CL_Pokemon(new Point3D(p), t, v, null);
 				// sets the pokemon edge
 				f.set_edge(correct_pokemon_edge(f));
 				ans.add(f);

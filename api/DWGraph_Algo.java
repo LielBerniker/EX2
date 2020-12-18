@@ -91,6 +91,14 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         this.init(temp_graph);
         return true;
     }
+
+    /**
+     * an inner function that go over the graph nodes from a certain node,
+     * and check if there is a path from this node to all the nodes from the graph
+     * the function sets every node tag that can be reced to 0
+     * the function start from a certain node than go over its neighbors and repeat
+     * @param src
+     */
     private void path_to_all(int src) {
         int node_key,edge_key;
         node_data temp_node;
@@ -122,7 +130,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         }
     }
     /**
-     * Compute a deep copy of this weighted graph but with back backward.
+     * Compute a deep copy of this weighted graph but with every edges sets to his backward.
      * @return
      */
     private directed_weighted_graph copy_backward() {
@@ -251,12 +259,20 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         }
         return  prev_contain;
     }
+
+    /**
+     * return true if the function succeed of saving the graph the algorithm initiate to a file
+     * if not succeed return false
+     * @param file - the file name (may include a relative path).
+     * @return
+     */
     @Override
     public boolean save(String file) {
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(this.Graph1);
         try {
+            // write the graph to a file
             PrintWriter save_to = new PrintWriter(new File(file));
             save_to.write(json);
             save_to.close();
@@ -268,13 +284,21 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return true;
     }
 
+    /**
+     * the function return true if it succeed to load a graph and initiate it from a file
+     * if not succeed return false
+     * @param file - file name of JSON file
+     * @return
+     */
     @Override
     public boolean load(String file) {
         try {
             GsonBuilder builder = new GsonBuilder();
+            // use a class to build the graph from the json
             builder.registerTypeAdapter(directed_weighted_graph.class,new directed_weighted_graph_json_deserializer());
             Gson gson = builder.create();
             FileReader reader = new FileReader(file);
+            // initiate the graph
             this.init(gson.fromJson(reader,directed_weighted_graph.class));
         }
         catch (FileNotFoundException e) {
@@ -284,36 +308,78 @@ public class DWGraph_Algo implements dw_graph_algorithms {
        return true;
     }
 
+    /**
+     * an inner class that holds a extended information about a node from the grpah
+     * this class used by the shortest path function in the algorithms
+     */
     private class node_extend implements Comparable
     {
         int key;
         String parent;
         double distance;
+
+        /**
+         * constructor to the node extend by a node
+         * @param node1
+         */
         public node_extend(node_data node1)
         {
             this.key = node1.getKey();
             this.parent = "";
             this.distance = Integer.MAX_VALUE;
         }
+
+        /**
+         * return the node extend key
+         * @return
+         */
         public int getKey()
         {
            return this.key;
         }
+
+        /**
+         * return the parent id
+         * @return
+         */
         public String getParent()
         {
             return  this.parent;
         }
+
+        /**
+         * set the parent id
+         * @param parent
+         */
         public void setParent(String parent) {
             this.parent = parent;
         }
+
+        /**
+         * det the distance from a certain node
+         * @return
+         */
         public double getDistance()
         {
             return this.distance;
         }
+
+        /**
+         * set the distance from a certain node
+         * @param distance
+         */
         public void setDistance(double distance) {
             this.distance = distance;
         }
 
+        /**
+         * a compare to function to the extend node
+         * return -1 if the current node got a smaller distance
+         * return 1 if the current node got a bigger distance
+         * return 0 if the nodes distance are equal
+         * @param other_n
+         * @return
+         */
         @Override
         public int compareTo(Object other_n) {
             node_extend node_other = (node_extend) other_n;
@@ -325,9 +391,21 @@ public class DWGraph_Algo implements dw_graph_algorithms {
                 return 0;
         }
     }
+
+    /**
+     * a class that create a graph from a json by two types of json
+     */
     private class directed_weighted_graph_json_deserializer implements JsonDeserializer<directed_weighted_graph>
     {
-
+        /**
+         * the function  cretae a graph from a json
+         * it can create a graph from to types of json graphs
+         * @param json
+         * @param type
+         * @param jsonDeserializationContext
+         * @return
+         * @throws JsonParseException
+         */
         @Override
         public directed_weighted_graph deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
             JsonObject jsonObject = json.getAsJsonObject();
@@ -336,6 +414,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             double nl_x , nl_y , nl_z, nw_temp,ew_temp;
             String ni_temp,ei_temp;
             JsonElement Graph_nodes_check = jsonObject.get("Graph_nodes");
+            // if the json contain Graph_nodes create a graph by the first type json graph builder
             if(Graph_nodes_check!=null){
             JsonObject Graph_nodes_json_obj1 =Graph_nodes_check.getAsJsonObject();
             for (Map.Entry<String, JsonElement> set: Graph_nodes_json_obj1.entrySet()) {
@@ -370,6 +449,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
                 }
             }
             }
+            // if the json contain do not Graph_nodes create a graph by the seconed type json graph builder
             else
             {
                 Graph_nodes_check = jsonObject.get("Nodes");

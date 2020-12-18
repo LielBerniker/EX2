@@ -16,17 +16,15 @@ public class CL_Agent {
 	private static int _count = 0;
 	private static int _seed = 3331;
 	private edge_data _curr_edge;
-	private long _sg_dt;
-	// my use
-	private directed_weighted_graph _gg;
+	private directed_weighted_graph _gg;// graph that the agent operate on
 	private node_data _curr_node;
 	private int _id;
 	private double _value;
-	private CL_Pokemon _curr_fruit;
+	private CL_Pokemon _curr_fruit;// agent pokemon to search
 	private geo_location _pos;
 	private double _speed;
-	private HashMap<Integer, Integer> point_arg;
-	private int node_counter;
+	private HashMap<Integer, Integer> point_arg; // contain the nodes in the agent path
+	private int node_counter;// counter to the node int the agent path
 
 	/**
 	 * a constructor of the agent
@@ -221,23 +219,6 @@ public class CL_Agent {
 		this._curr_fruit = curr_fruit;
 	}
 
-	public void set_SDT(long ddtt) {
-		long ddt = ddtt;
-		if (this._curr_edge != null) {
-			double w = get_curr_edge().getWeight();
-			geo_location dest = _gg.getNode(get_curr_edge().getDest()).getLocation();
-			geo_location src = _gg.getNode(get_curr_edge().getSrc()).getLocation();
-			double de = src.distance(dest);
-			double dist = _pos.distance(dest);
-			if (this.get_curr_fruit().get_edge() == this.get_curr_edge()) {
-				dist = _curr_fruit.getLocation().distance(this._pos);
-			}
-			double norm = dist / de;
-			double dt = w * norm / this.getSpeed();
-			ddt = (long) (1000.0 * dt);
-		}
-		this.set_sg_dt(ddt);
-	}
 
 	/**
 	 * sets the agent current edge
@@ -245,14 +226,6 @@ public class CL_Agent {
 	 */
 	public edge_data get_curr_edge() {
 		return this._curr_edge;
-	}
-
-	public long get_sg_dt() {
-		return _sg_dt;
-	}
-
-	public void set_sg_dt(long _sg_dt) {
-		this._sg_dt = _sg_dt;
 	}
 
 	/**

@@ -7,6 +7,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DWGraph_DSTest {
+
+    /**
+     * create a graph with 8 nodes and no edges
+     * and return it
+     * @return
+     */
     private directed_weighted_graph create_graph1()
     {
         directed_weighted_graph graph_temp = new DWGraph_DS();
@@ -18,6 +24,11 @@ class DWGraph_DSTest {
 
         return graph_temp;
     }
+
+    /**
+     * create a graph with 8 nodes and 10 edges
+     * @return
+     */
     private directed_weighted_graph create_graph2()
     {
         directed_weighted_graph graph_temp = new DWGraph_DS();

@@ -11,38 +11,61 @@ import java.io.IOException;
 import java.util.*;
 
 public class Ex2 implements Runnable {
-    private static frame _screen;
+
+    public static int id;
+    public static int scenario;
+    public static Thread user;
+    private static frame _screen=new frame();
     private Arena game_arena;
-    public static void main(String[] a) throws IOException {
-        Thread user = new Thread(new Ex2());
-        user.start();
+    private static enteryPanel entery=new enteryPanel();
+    private static Panel panel;
+
+
+
+
+    public static void main(String[] args) throws IOException {
+
+        user = new Thread(new Ex2());
+
+       if(args.length==0){
+           _screen.setSize(1000,700);
+           _screen.add(entery);
+           _screen.setVisible(true);
+
+       }else{
+           id=Integer.parseInt(args[0]);
+           scenario=Integer.parseInt(args[1]);
+           user.start();
+       }
 
     }
     @Override
     public void run() {
-        int scenario, ind=0;
+        _screen.remove(entery);
+
+        int  ind=0;
         long dt=125,sleep_change=0, time_to,on_edge=0;
-        // user insert a scenario
-       scenario = scenario_input();
 
-        //System.out.println("Please enter use id");
-        //int id = myObj.nextInt();  // Read user input
-
-        int id = 315708370;
         game_arena= new Arena();// an arena object to help with multiply functions
+
         dw_graph_algorithms algo_run = new DWGraph_Algo();// graph algorithms to help create a graph and use more function on it
-        game_service game1 = Game_Server_Ex2.getServer(scenario);// the game level
+
+        game_service game1 =Game_Server_Ex2.getServer(this.scenario);// the game level
 
         // login to the game with id
-        game1.login(id);
+        game1.login(this.id);
+
         try {
             // initiate the graph by the information from the game
-            init_graph_to_algo(scenario,game1,algo_run);
+            init_graph_to_algo(this.scenario,game1,algo_run);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
         // set the arena graph
         game_arena.setGraph(algo_run.getGraph());
+        init_screen(game_arena);
+
         System.out.println(game1);
         // create a  Priority Queue of Pokemons by their value
         PriorityQueue <CL_Pokemon> Pokemons_pri = init_pokemones(game1,game_arena,algo_run);// collection of pokemos by their value
@@ -52,9 +75,9 @@ public class Ex2 implements Runnable {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        // set the graphics arena
-       init_screen(game_arena);
+
         game1.startGame();
+        double time = game1.timeToEnd()/1000;
         while (game1.isRunning())
         {
              time_to=(game1.timeToEnd()/1000);
@@ -133,6 +156,8 @@ public class Ex2 implements Runnable {
 }
 
     /**
+     * the function return a Queue of pokemons that contain all the pokemons,
+     * that currently been set to an agent
      * the function add an agents to the game and set their start node .
      * an agent start node sets by the pokemon from the Priority Queue
      * the start node been set to the closest node to the pokemon that been chose to the agent
@@ -140,6 +165,7 @@ public class Ex2 implements Runnable {
      * @param arena
      * @param game
      * @param pokemons_order
+     * @return
      */
     public static void add_all_agents(Arena arena, game_service game ,PriorityQueue<CL_Pokemon> pokemons_order, dw_graph_algorithms algo) throws JSONException {
 
@@ -285,11 +311,14 @@ public class Ex2 implements Runnable {
      * the function get a arena and sets the frame by the arena
      * @param game_arena
      */
-    public static void init_screen(Arena game_arena)
+
+        public static void init_screen(Arena game_arena)
         {
-            _screen = new frame("test Ex2");
+            _screen = new frame();
             _screen.setSize(1000, 700);
-            _screen.panel.update(game_arena);
+            panel=new Panel();
+            _screen.add(panel);
+            panel.update(game_arena);
             _screen.show();
         }
     }

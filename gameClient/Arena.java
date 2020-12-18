@@ -95,7 +95,7 @@ public class Arena {
 		this._info = _info;
 	}
 
-	private static Range2D GraphRange(directed_weighted_graph g) {
+	public static Range2D GraphRange(directed_weighted_graph g) {
 		Iterator<node_data> itr = g.getV().iterator();
 		double x0=0,x1=0,y0=0,y1=0;
 		boolean first = true;
@@ -353,21 +353,6 @@ public class Arena {
 		return poki;
 	}
 
-	/**
-	 * return the node with the biggest value of y in its location
-	 * @return
-	 */
-	public node_data biggest_node()
-{
-	node_data biggest_of_all = null;
-	double y_height = Double.MIN_VALUE;
-	// go over the nodes of the graph
-	for (node_data node_temp: getGraph().getV()) {
-		if(node_temp.getLocation().y()>y_height)
-			biggest_of_all = node_temp;
-	}
-	return biggest_of_all;
-}
 
 	/**
 	 * return true if the current agent is on an edge with a pokemon

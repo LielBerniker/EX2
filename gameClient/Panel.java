@@ -36,6 +36,8 @@ public class Panel extends JPanel{
 
 
     public  Panel() {
+        super();
+        this.setLayout(null);
         int _ind = 0;
 
     }
@@ -78,6 +80,7 @@ public class Panel extends JPanel{
         drawInfo(g);
         drawClock(g);
         drawTitle(g);
+        drawlevel(g);
 
 
     }
@@ -121,7 +124,7 @@ public class Panel extends JPanel{
 
     /**
      * drawing the Pokemons and their value on the graph
-     * draws balvazor or piccasho according to their position on the graph edges.
+     * draws different types of pokemons according to their position on the graph edges.
      * @param g
      */
     private void drawPokemons(Graphics g) {
@@ -171,30 +174,29 @@ public class Panel extends JPanel{
      * @param g
      */
     private void drawAgants(Graphics g) {
-        HashMap<Integer,CL_Agent> rs = this.ar.get_Agents_info();
-        //	Iterator<OOP_Point3D> itr = rs.iterator();
-        int i=0;
-        while(rs!=null && i<rs.size()) {
-            CL_Agent agent=rs.get(i);
-            geo_location gl = agent.getLocation();
-            int r=8;
+        HashMap<Integer,CL_Agent> agents_colection = this.ar.get_Agents_info();
 
-            if(gl!=null) {
-                //operating world_to_frame on the agent geo_location
-                geo_location fp = this._w2f.world2frame(gl);
+        if(agents_colection!=null) {
+            for (CL_Agent agent : agents_colection.values()) {
 
-                try {
-                    BufferedImage img = ImageIO.read(new File("./src/resources/ash face.gif"));
+                geo_location gl = agent.getLocation();
+                int r = 8;
 
-                    g.drawImage(img,(int)fp.x()-r,(int)fp.y()-r,30,30,null);
+                if (gl != null) {
+                    //operating world_to_frame on the agent geo_location
+                    geo_location agent_loc = this._w2f.world2frame(gl);
+
+                    try {
+                        BufferedImage img = ImageIO.read(new File("./src/resources/ash face.gif"));
+                        g.drawImage(img, (int) agent_loc.x() - r, (int) agent_loc.y() - r, 30, 30, null);
+
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    g.setColor(new Color(0xDEECEA));
+                    g.drawString("" + agent.getValue(), (int) agent_loc.x() - r, (int) agent_loc.y() - r);
                 }
-                catch (IOException ex){
-                    ex.printStackTrace();
-                }
-                g.setColor( new Color(0xDEECEA));
-                g.drawString(""+agent.getID(),(int)fp.x()-5, (int)fp.y()-5);
             }
-            i++;
         }
     }
 
@@ -249,12 +251,17 @@ public class Panel extends JPanel{
     try {
         BufferedImage img = ImageIO.read(new File("./src/resources/Pokemon-Symbol.jpg"));
 
-        g.drawImage(img,300,25,300,150,null);
+        g.drawImage(img,300,10,180,100,null);
     }
     catch (IOException ex){
         ex.printStackTrace();
     }
 
+}
+private void drawlevel(Graphics g){
+    g.setColor(new Color(246, 242, 242));
+    g.setFont(new Font("Wide Latin", Font.BOLD, 18) );
+    g.drawString("level-"+Ex2.scenario,this.getWidth()-100,57);
 }
 
 }

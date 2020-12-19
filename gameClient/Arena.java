@@ -18,13 +18,13 @@ import java.util.zip.DeflaterOutputStream;
  */
 public class Arena {
 	public static final double EPS1 = 0.00001, EPS2=EPS1*EPS1, EPS=EPS2;
-	private directed_weighted_graph _gg;
-	private List<CL_Pokemon> _pokemons;
-	private long time;
+	private directed_weighted_graph _gg; // the graph that the arena operates on
+	private List<CL_Pokemon> _pokemons;// the collection of pokemons
+	private long time; // time to the end of the game
 	private List<String> _info;
 	private static Point3D MIN = new Point3D(0, 100,0);
 	private static Point3D MAX = new Point3D(0, 100,0);
-	private HashMap<Integer,CL_Agent> agents_information;
+	private HashMap<Integer,CL_Agent> agents_information; // collection of agents in the game
 
 	/**
 	 * constructor to the arena

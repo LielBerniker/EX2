@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 public class DWGraph_Algo implements dw_graph_algorithms {
-    private directed_weighted_graph Graph1;
+    private directed_weighted_graph Graph1;// the graph that the algorithms can be used on
 
     public DWGraph_Algo()
     {

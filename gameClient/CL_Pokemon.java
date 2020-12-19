@@ -9,8 +9,8 @@ public class CL_Pokemon implements Comparable {
 
 	private edge_data _edge;
 	private double _value;
-	private int _type;
-	private Point3D _pos;
+	private int _type;// type of pokemon , refer to the type of edge the pokemon located on
+	private Point3D _pos;// location of the pokemon
 
 	/**
 	 * constructor of the pokemon

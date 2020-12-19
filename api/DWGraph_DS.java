@@ -1,6 +1,5 @@
 package api;
 
-import api.directed_weighted_graph;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,11 +7,11 @@ import java.util.HashSet;
 
 public class DWGraph_DS implements directed_weighted_graph {
 
-    private HashMap<Integer, node_data> Graph_nodes;
-    private HashMap<Integer,HashMap<Integer, edge_data>> Graph_Edges_go_out;
-    private HashMap<Integer,HashMap<Integer, edge_data>> Graph_Edges_go_in;
-    private int MC;
-    private int Edge_count;
+    private HashMap<Integer, node_data> Graph_nodes;// collection of the vertices in the graph
+    private HashMap<Integer,HashMap<Integer, edge_data>> Graph_Edges_go_out;// collection of the edges going out from a node in the graph
+    private HashMap<Integer,HashMap<Integer, edge_data>> Graph_Edges_go_in;// collection of the edges going in a node in the graph
+    private int MC; // holds the number of changes in the graph
+    private int Edge_count;// counter for the number of edges
 
     /**
      * constructor to the graph

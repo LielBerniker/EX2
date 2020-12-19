@@ -69,8 +69,6 @@ public class Panel extends JPanel{
      * @param g
      */
     public void paint(Graphics g) {
-        //int w = this.getWidth();
-        //int h = this.getHeight();
 
         updateFrame();
 

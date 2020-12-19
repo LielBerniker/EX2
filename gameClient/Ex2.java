@@ -77,13 +77,15 @@ public class Ex2 implements Runnable {
         }
 
         game1.startGame();
-        double time = game1.timeToEnd()/1000;
+
         while (game1.isRunning())
         {
              time_to=(game1.timeToEnd()/1000);
            game_arena.setTime(time_to);
          game_full_move(game1,game_arena,algo_run);
             game1.move();
+            _screen.repaint();
+
             if (game_arena.on_pokemon_edge()==true)
                  on_edge =50;
             else
@@ -92,7 +94,7 @@ public class Ex2 implements Runnable {
                 sleep_change =20;
             System.out.println(game1.getAgents());
                 try {
-                        _screen.repaint();
+
                     Thread.sleep(dt-(on_edge+sleep_change));
                                      ind++;
                                }
@@ -284,28 +286,6 @@ public class Ex2 implements Runnable {
         return ((int)(Math.ceil(all_speed/arena.get_Agents_info().size())));
         }
 
-    /**
-     *the function gets a scenario number from the user and return it
-     * the scenario must be 0 - 23
-     * @return
-     */
-    public static int scenario_input()
-        {
-            int scenario;
-            boolean flag;
-            Scanner myObj = new Scanner(System.in);  // Create a Scanner object
-            do {
-                System.out.println("Please enter scenario");// choose a scenario for the game
-                 scenario = myObj.nextInt();  // Read user input
-                if (scenario<0 || scenario>23)
-                {
-                    System.out.println("there is no scenario " + scenario);
-                    flag = false;
-                }
-                else flag = true;
-            }while (flag==false);
-            return scenario;
-        }
 
     /**
      * the function get a arena and sets the frame by the arena

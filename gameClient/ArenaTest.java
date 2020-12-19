@@ -9,23 +9,15 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * this class is a test class for the Arena class . the tests here are mainly for function of getting and setting
+ * the main function of the Arena class are being tested at the Ex2 class while running the class and check
+ * the functionality of the details represent as a graphic context at the Ex2
+ */
 class ArenaTest {
- public String create_agents_collection_1()
- {
-   String all_agents = "{\"Agents\":[{\"Agent\":{\"id\":0,\"value\":13.0,\"src\":38,\"dest\":39,\"speed\"" +
-           ":1.0,\"pos\":\"35.20202363793417,32.106825517755034,0.0\"}},{\"Agent\":{\"id\":1,\"value\":12.0,\"src\":18,\"" +
-           "dest\":17,\"speed\":1.0,\"pos\":\"35.194416604039354,32.1060718578479,0.0\"}},{\"Agent\":{\"id\":2,\"value\"" +
-           ":14.0,\"src\":13,\"dest\":-1,\"speed\":1.0,\"pos\":\"35.209415362389024,32.10265552605042,0.0\"}}]}";
-   return all_agents;
- }
- public String create_agents_collection_2()
- {
-    String all_agents_2 = "{\"Agents\":[{\"Agent\":{\"id\":0,\"value\":159.0,\"src\":5,\"dest\":6,\"speed\":5.0,\"pos\"" +
-            ":\"35.20794565010835,32.10444608893041,0.0\"}},{\"Agent\":{\"id\":1,\"value\":185.0,\"src\":30,\"dest\":29,\"" +
-            "speed\":5.0,\"pos\":\"35.20253610714826,32.10307345622551,0.0\"}},{\"Agent\":{\"id\":2,\"value\":301.0,\"src\"" +
-            ":31,\"dest\":30,\"speed\":5.0,\"pos\":\"35.19786798547216,32.10151062016807,0.0\"}}]}";
-    return all_agents_2;
- }
+   /**
+    * test for functions of getting and setting the time of the arena
+    */
     @Test
     void set_and_get_Time_test() {
        Arena arena_1 = new Arena();
@@ -40,6 +32,9 @@ class ArenaTest {
        assertEquals(0,arena_1.getTime());
     }
 
+   /**
+    * test for functions of getting and setting the pokemons collection of the arena
+    */
     @Test
     void set_and_get_Pokemons_test() {
        Arena arena_1 = new Arena();
@@ -55,6 +50,9 @@ class ArenaTest {
        }
     }
 
+   /**
+    * test for function of getting and setting the graph of the arena
+    */
     @Test
     void set_and_get_Graph_test() {
        Arena arena_1 = new Arena();
@@ -67,30 +65,13 @@ class ArenaTest {
        assertTrue(arena_1.getGraph().equals(graph_1));
     }
 
-
+   /**
+    * test for function of getting  the agents collection of the arena
+    */
     @Test
     void get_Agents_info() {
     Arena arena_1 = new Arena();
     assertNotNull(arena_1.get_Agents_info());
     }
 
-    @Test
-    void pokemon_contain() {
-    }
-
-    @Test
-    void pokemon_in_search() {
-    }
-
-    @Test
-    void json2Pokemons_update() {
-    }
-
-    @Test
-    void closest_pokemon() {
-    }
-
-    @Test
-    void on_pokemon_edge() {
-    }
 }

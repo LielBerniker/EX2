@@ -235,7 +235,7 @@ public class Arena {
 	}
 
 	/**
-	 *
+	 *the function take a json string of a specific agents ans set his details by the details from the json
 	 * @param id_agent
 	 * @param json
 	 */

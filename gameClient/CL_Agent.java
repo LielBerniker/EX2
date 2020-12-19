@@ -40,6 +40,7 @@ public class CL_Agent {
 		this._speed = 0;
 		point_arg = new HashMap<>();
 		node_counter = 0;
+		this._curr_edge= null;
 	}
 	/**
 	 * update the agent by the json string the function gets

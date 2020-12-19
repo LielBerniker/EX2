@@ -71,8 +71,8 @@ public class CL_Pokemon implements Comparable {
 
 	/**
 	 * a compare to function
-	 * if this object is bigger than o object in value return 1
-	 * if smaller in value return -1
+	 * if this object is bigger than o object in value return -1
+	 * if smaller in value return 1
 	 * else return 0
 	 * @param o
 	 * @return

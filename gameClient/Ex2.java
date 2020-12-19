@@ -20,9 +20,6 @@ public class Ex2 implements Runnable {
     private static enteryPanel entery=new enteryPanel();
     private static Panel panel;
 
-
-
-
     public static void main(String[] args) throws IOException {
 
         user = new Thread(new Ex2());

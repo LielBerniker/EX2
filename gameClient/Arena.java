@@ -40,7 +40,10 @@ public class Arena {
 	 * @param t
 	 */
 	public void setTime(long t){
+		if(t>=0)
 		this.time=t;
+		else
+			this.time = 0;
 	}
 
 	/**

@@ -3,15 +3,11 @@ package gameClient;
 import javax.swing.*;
 import java.awt.*;
 
-
+/**
+ * making gui frame
+ */
 public class frame extends JFrame {
-    enteryPanel Epanel;
-    Panel panel;
 
-    /**
-     * making gui frame and adding panel to it
-     *
-     */
     public frame(){
         super();
         this.setTitle("liel&rivka");

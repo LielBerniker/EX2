@@ -61,6 +61,7 @@ public class Ex2 implements Runnable {
         }
         // set the arena graph
         game_arena.setGraph(algo_run.getGraph());
+        _screen.remove(entery);
         init_screen(game_arena);
 
         System.out.println(game1);
@@ -291,7 +292,7 @@ public class Ex2 implements Runnable {
 
         public static void init_screen(Arena game_arena)
         {
-            _screen = new frame();
+
             _screen.setSize(1000, 700);
             panel=new Panel();
             _screen.add(panel);

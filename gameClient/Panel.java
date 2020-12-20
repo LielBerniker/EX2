@@ -23,9 +23,8 @@ import java.util.List;
 
 /**
  * This class represents a very simple GUI class to present a
- * game on a graph - you are welcome to use this class - yet keep in mind
- * that the code is not well written in order to force you improve the
- * code and not to take it "as is".
+ * game on a graph
+ * bases on the code of boaz.benmoshe
  *
  */
 public class Panel extends JPanel{
@@ -53,7 +52,7 @@ public class Panel extends JPanel{
     }
 
     /**
-     * setting frame range
+     * setting panel range
      * making adjustment between world range and frame range
      */
     private void updateFrame() {
@@ -259,7 +258,7 @@ public class Panel extends JPanel{
 private void drawlevel(Graphics g){
     g.setColor(new Color(246, 242, 242));
     g.setFont(new Font("Wide Latin", Font.BOLD, 18) );
-    g.drawString("level-"+Ex2.scenario,this.getWidth()-100,57);
+    g.drawString("level: "+Ex2.scenario,this.getWidth()-100,57);
 }
 
 }

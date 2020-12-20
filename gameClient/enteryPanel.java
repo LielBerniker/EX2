@@ -15,32 +15,40 @@ public class enteryPanel extends JPanel implements ActionListener {
     JTextField T_level;
     JLabel L_id;
     JTextField T_id;
+    JLabel title;
 
-
+    /**
+     * this class represent a log in panel to the game which will be added  to the frame
+     *
+     */
     public enteryPanel() {
         super();
         this.setLayout(null);
+        this.setBackground(new Color(218, 222, 248));
+        title=new JLabel("the pokemons game");
+        title.setBounds(360,5,700,350);
+        this.add(title);
 
         boton = new JButton( "start game");
-        boton.setBounds(100, 100, 100, 50);
+        boton.setBounds(100, 300, 100, 50);
         this.add(boton);
         boton.addActionListener(this);
 
         L_level = new JLabel("enter level");
-        L_level.setBounds(330, 130, 130, 80);
+        L_level.setBounds(330, 330, 130, 80);
         this.add(L_level);
         T_level = new JTextField();
-        T_level.setBounds(300, 100, 100, 50);
+        T_level.setBounds(300, 300, 100, 50);
         T_level.setBackground(Color.GRAY);
-        T_level.setCaretColor(Color.black);
+        T_level.setCaretColor(Color.white);
         this.add(T_level);
 
         L_id = new JLabel("enter id");
-        L_id.setBounds(570, 130, 130, 80);
+        L_id.setBounds(570, 330, 130, 80);
         this.add(L_id);
 
         T_id = new JTextField();
-        T_id.setBounds(530, 100, 100, 50);
+        T_id.setBounds(530, 300, 100, 50);
         T_id.setBackground(Color.GRAY);
         T_id.setCaretColor(Color.black);
         this.add(T_id);
@@ -53,9 +61,15 @@ public class enteryPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==boton){
 
-          Ex2.scenario=Integer.parseInt(T_level.getText());
-          Ex2.id=Integer.parseInt(T_id.getText());
-          Ex2.user.start();
+            try {
+                Ex2.scenario = Integer.parseInt(T_level.getText());
+                Ex2.id = Integer.parseInt(T_id.getText());
+
+                Ex2.user.start();
+            }catch (NumberFormatException ne){
+                System.out.println("invalid id");
+
+            }
 
         }
 

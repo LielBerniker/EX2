@@ -1,7 +1,7 @@
 package gameClient.util;
 /**
  * This class represents a simple 1D range of shape [min,max]
- * @author boaz_benmoshe
+ * base on the code of boaz_benmoshe
  *
  */
 public class Range {

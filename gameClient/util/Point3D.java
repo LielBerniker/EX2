@@ -7,6 +7,10 @@ import api.geo_location;
 
 import java.io.Serializable;
 
+/**
+ * this class represent a 3 dimensional point
+ * this code is based on a code of boaz.benmoshe
+ */
 public class Point3D implements geo_location, Serializable{
 
 	private static final long serialVersionUID = 1L;

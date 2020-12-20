@@ -6,7 +6,7 @@ import gameClient.util.Range2D;
 
 /**
  * This class represents a simple world 2 frame conversion (both ways).
- * @author boaz.benmoshe
+ *based on the code of  boaz.benmoshe
  *
  */
 

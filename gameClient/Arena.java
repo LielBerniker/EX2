@@ -14,7 +14,7 @@ import java.util.zip.DeflaterOutputStream;
 
 /**
  * This class represents a multi Agents Arena which move on a graph - grabs Pokemons
- * @author boaz.benmoshe
+ * by the code of boaz.benmoshe
  */
 public class Arena {
 	public static final double EPS1 = 0.00001, EPS2=EPS1*EPS1, EPS=EPS2;

@@ -36,6 +36,8 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     }
     /**
      * Compute a deep copy of this weighted graph.
+     * doing so by copying the vertices of the graph and each edges that go out from
+     * each vertex
      * @return
      */
     @Override
@@ -64,6 +66,12 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     /**
      * Returns true if and only if (iff) there is a valid path from each node to each
      * other node. NOTE: assume directional graph (all n*(n-1) ordered pairs).
+     * this function checks if a specific vertex can rech to all the vertex
+     * in the graph , doing so with an inner function.
+     * if each vertex in the graph can be reached from the specific vertex.
+     * create a copy of the graph but with all of the edges with the opposite direction,
+     * doing so with an inner function, is still reach all the vertices in the graph
+     * so the graph is connected and the function return true.
      * @return
      */
     @Override
@@ -131,6 +139,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     }
     /**
      * Compute a deep copy of this weighted graph but with every edges sets to his backward.
+     * by going over the current graph and copy all of the graph nodes and edges that go out from each node
      * @return
      */
     private directed_weighted_graph copy_backward() {
@@ -157,6 +166,8 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     }
     /**
      * returns the length of the shortest path between src to dest
+     * soing so by using an information in the collection that an inner function return to the function ,
+     * this collection contain all the nodes in the path and their distance from the source node
      * Note: if no such path --> returns -1
      * @param src - start node
      * @param dest - end (target) node
@@ -177,7 +188,8 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     /**
      * returns the the shortest path between src to dest - as an ordered List of nodes:
      * src--> n1-->n2-->...dest
-     * see: https://en.wikipedia.org/wiki/Shortest_path_problem
+     * doing so by using an inner function that return a collection contains all the nodes in the path With their previous
+     * that the function crete a list by the collection it gets from the inner function
      * Note if no such path --> returns null;
      * @param src - start node
      * @param dest - end (target) node

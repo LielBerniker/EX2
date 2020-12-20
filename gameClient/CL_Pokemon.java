@@ -5,6 +5,10 @@ import gameClient.util.Point3D;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
+/**
+ * this class represent the pokemons tin the game
+ * this code base on the code of boaz.benmoshe
+ */
 public class CL_Pokemon implements Comparable {
 
 	private edge_data _edge;

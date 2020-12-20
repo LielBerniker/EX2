@@ -11,6 +11,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * this class represent the agents opreate in the game
+ * this code is based on the code of boaz.benmoshe
+ */
 public class CL_Agent {
 	public static final double EPS = 0.001;
 	private static int _count = 0;

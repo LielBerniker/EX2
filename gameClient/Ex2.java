@@ -17,7 +17,7 @@ public class Ex2 implements Runnable {
     public static Thread user;
     private static frame _screen=new frame();
     private Arena game_arena;
-    private static enteryPanel entery=new enteryPanel();
+    private static enteryPanel entry =new enteryPanel();
     private static Panel panel;
 
     public static void main(String[] args) throws IOException {
@@ -26,7 +26,7 @@ public class Ex2 implements Runnable {
 
        if(args.length==0){
            _screen.setSize(1000,700);
-           _screen.add(entery);
+           _screen.add(entry);
            _screen.setVisible(true);
 
        }else{
@@ -38,7 +38,7 @@ public class Ex2 implements Runnable {
     }
     @Override
     public void run() {
-        _screen.remove(entery);
+        _screen.remove(entry);
 
         int  ind=0;
         long dt=125,sleep_change=0, time_to,on_edge=0;
